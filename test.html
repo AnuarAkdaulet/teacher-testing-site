@@ -36,13 +36,16 @@
             <label><input type="radio" name="q3" value="10"> 10 m/s²</label><br>
         </div>
 
-        <button type="button" class="button" onclick="window.checkAnswers()">Submit</button>
+        <button type="button" class="button" onclick="checkAnswers()">Submit</button>
     </form>
     
     <div class="result" id="result"></div>
-    
     <script>
-        function window.checkAnswers() {
+console.log("test.html is loaded"); // Отладочное сообщение при загрузке test.html
+</script>
+
+    <script>
+        function checkAnswers() {
             var form = document.getElementById('testForm');
             var correctAnswers = { q1: "120", q2: "6x", q3: "9.8" };
             var score = 0;
