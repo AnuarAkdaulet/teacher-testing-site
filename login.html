@@ -8,73 +8,55 @@
 </head>
 <body>
     <h1>Добро пожаловать! Войдите через Google</h1>
-    <!-- Кнопка для входа через Google -->
     <button id="googleSignInBtn">Войти с помощью Google</button>
-
-    <!-- Отображение информации о пользователе -->
-    <div id="profileInfo" style="display: none;">
-        <h3>Добро пожаловать, <span id="userName"></span>!</h3>
-        <img id="userImage" src="" alt="Фото профиля" width="100"><br>
-        <button id="signOutBtn">Выйти</button>
-    </div>
+    <div id="status">Ожидание загрузки Google API...</div>
 
     <script>
-        let googleUser = {};
-
-        // Функция для обработки успешного входа
         function onSignIn(googleUser) {
+            console.log("Функция onSignIn вызвана!");
             var profile = googleUser.getBasicProfile();
             var userName = profile.getName();
-            var userImage = profile.getImageUrl();
             var userEmail = profile.getEmail();
 
             // Отображение информации о пользователе
-            document.getElementById('userName').textContent = userName;
-            document.getElementById('userImage').src = userImage;
-            document.getElementById('profileInfo').style.display = 'block';
+            document.getElementById('status').textContent = `Добро пожаловать, ${userName}! Ваш email: ${userEmail}`;
             document.getElementById('googleSignInBtn').style.display = 'none';
-
-            // Сохраняем данные в `localStorage` для использования на других страницах
-            localStorage.setItem("userName", userName);
-            localStorage.setItem("userEmail", userEmail);
-
             console.log("Пользователь вошёл: ", userName);
-
-            // Переход на главную страницу после входа
-            setTimeout(() => {
-                window.location.href = "index.html";
-            }, 3000);
         }
 
-        // Функция для выхода
-        function signOut() {
-            var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signOut().then(function () {
-                console.log('Пользователь вышел.');
-                document.getElementById('profileInfo').style.display = 'none';
-                document.getElementById('googleSignInBtn').style.display = 'block';
-            });
-        }
-
-        // Инициализация Google OAuth
         function initGoogleAuth() {
+            console.log("Попытка загрузки Google Auth...");
+
             gapi.load('auth2', function() {
+                console.log("gapi.load завершён!");
                 gapi.auth2.init({
-                    client_id: '11087384827-32a8atfpptsfpv82d1jgemsb69du4q34.apps.googleusercontent.com'
+                    client_id: 'client_id":"11087384827-32a8atfpptsfpv82d1jgemsb69du4q34.apps.googleusercontent.com.apps.googleusercontent.com'  // Убедитесь, что client_id указан правильно
                 }).then(function(auth2) {
+                    console.log("Google Auth успешно инициализирован.");
+
                     var signInBtn = document.getElementById('googleSignInBtn');
                     signInBtn.onclick = function() {
-                        auth2.signIn().then(onSignIn);
+                        console.log("Кнопка 'Войти с помощью Google' нажата.");
+                        auth2.signIn().then(onSignIn).catch(function(error) {
+                            console.error("Ошибка при входе:", error);
+                        });
                     };
+                }).catch(function(error) {
+                    console.error("Ошибка инициализации Google Auth:", error);
                 });
             });
         }
 
-        // Вызов инициализации при загрузке страницы
         window.onload = function() {
-            initGoogleAuth();
-            document.getElementById('signOutBtn').onclick = signOut;
-        }
+            console.log("Инициализация после загрузки страницы...");
+            if (typeof gapi === 'undefined') {
+                console.error("Google API не загружен. Убедитесь, что скрипт platform.js правильно подключён.");
+                document.getElementById('status').textContent = "Ошибка: Google API не загружен.";
+            } else {
+                document.getElementById('status').textContent = "Google API загружен.";
+                initGoogleAuth();
+            }
+        };
     </script>
 </body>
 </html>
