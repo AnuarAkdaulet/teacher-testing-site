@@ -17,7 +17,6 @@
             var userName = profile.getName();
             var userEmail = profile.getEmail();
 
-            // Отображение информации о пользователе
             document.getElementById('status').textContent = `Добро пожаловать, ${userName}! Ваш email: ${userEmail}`;
             document.getElementById('googleSignInBtn').style.display = 'none';
 
@@ -25,12 +24,22 @@
         }
 
         function initGoogleAuth() {
-            gapi.load('auth2', function() {
+            if (gapi.auth2.getAuthInstance()) {
+                console.log("gapi.auth2 уже инициализирован, используем существующий экземпляр.");
+                var auth2 = gapi.auth2.getAuthInstance();
+
+                var signInBtn = document.getElementById('googleSignInBtn');
+                signInBtn.onclick = function() {
+                    auth2.signIn().then(onSignIn).catch(function(error) {
+                        console.error("Ошибка при входе:", error);
+                    });
+                };
+            } else {
                 gapi.auth2.init({
-                    client_id: 'client_id":"11087384827-32a8atfpptsfpv82d1jgemsb69du4q34.apps.googleusercontent.com'  // Убедитесь, что здесь указан ваш Client ID!
+                    client_id: 'ВАШ_CLIENT_ID.apps.googleusercontent.com'
                 }).then(function(auth2) {
                     console.log("Google Auth успешно инициализирован.");
-
+                    
                     var signInBtn = document.getElementById('googleSignInBtn');
                     signInBtn.onclick = function() {
                         auth2.signIn().then(onSignIn).catch(function(error) {
@@ -40,7 +49,7 @@
                 }).catch(function(error) {
                     console.error("Ошибка инициализации Google Auth:", error);
                 });
-            });
+            }
         }
 
         window.onload = function() {
