@@ -57,6 +57,22 @@
                 initGoogleAuth();
             }
         };
-    </script>
+    </script
+        <script>
+    var script = document.createElement('script');
+    script.src = 'https://apis.google.com/js/platform.js';
+    script.onload = function() {
+        console.log("Google API загружен вручную!");
+        if (typeof gapi !== 'undefined') {
+            gapi.load('auth2', function() {
+                console.log("gapi.auth2 загружен вручную.");
+            });
+        } else {
+            console.error("Google API не загружен.");
+        }
+    };
+    document.head.appendChild(script);
+</script>
+
 </body>
 </html>
