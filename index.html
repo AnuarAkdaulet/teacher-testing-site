@@ -15,7 +15,7 @@
             justify-content: space-between;
             align-items: center;
             background-color: #333;
-            padding: 10px 20px; /* Исправлено */
+            padding: 10px 20px;
             position: sticky;
             top: 0;
             z-index: 10;
@@ -23,7 +23,7 @@
         .navbar a {
             color: white;
             text-decoration: none;
-            padding: 10px 20px; /* Исправлено */
+            padding: 10px 20px;
         }
         .navbar a:hover {
             background-color: #575757;
@@ -83,6 +83,7 @@
 
     <!-- Подключение JavaScript для загрузки страниц -->
     <script>
+        // Функция для динамической загрузки страниц
         function loadPage(page) {
             fetch(page)
                 .then(response => response.text())
@@ -99,7 +100,8 @@
         document.addEventListener("DOMContentLoaded", function () {
             loadPage('home.html');
         });
-      <script>
+
+        // Функция для проверки ответов на тесты
         function checkAnswers() {
             var form = document.getElementById('testForm');
             var correctAnswers = { q1: "120", q2: "6x", q3: "9.8" };
@@ -115,7 +117,6 @@
             var resultDiv = document.getElementById('result');
             resultDiv.textContent = "Your score: " + score + " out of " + totalQuestions;
         }
-    </script>  
     </script>
 </body>
 </html>
