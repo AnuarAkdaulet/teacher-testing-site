@@ -17,14 +17,14 @@
             var userName = profile.getName();
             var userEmail = profile.getEmail();
 
+            // Обновляем интерфейс после успешного входа
             document.getElementById('status').textContent = `Добро пожаловать, ${userName}! Ваш email: ${userEmail}`;
-            document.getElementById('googleSignInBtn').style.display = 'none';
+            document.getElementById('googleSignInBtn').style.display = 'none';  // Скрываем кнопку входа
 
             console.log("Пользователь вошёл: ", userName);
         }
 
         function initGoogleAuth() {
-            // Загружаем и инициализируем Google API
             gapi.load('auth2', function() {
                 console.log("Google API загружен и инициализирован.");
                 
@@ -40,6 +40,11 @@
                             console.error("Ошибка при входе:", error);
                         });
                     };
+
+                    // Проверяем, если пользователь уже вошёл, обновляем интерфейс
+                    if (auth2.isSignedIn.get()) {
+                        onSignIn(auth2.currentUser.get());
+                    }
                 }).catch(function(error) {
                     console.error("Ошибка инициализации Google Auth:", error);
                 });
@@ -50,7 +55,6 @@
             console.log("Проверка загрузки Google API...");
             
             if (typeof gapi !== 'undefined') {
-                // Если gapi загружен, инициализируем Google Auth
                 initGoogleAuth();
             } else {
                 console.error("Google API не загружен. Убедитесь, что скрипт platform.js правильно подключён.");
