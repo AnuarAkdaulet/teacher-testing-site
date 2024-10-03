@@ -6,6 +6,16 @@
     <title>Teacher Testing Site</title>
 </head>
 <body>
+    <div id="menu-container"></div>
+<script>
+    // Динамическая загрузка меню из файла menu.html
+    fetch('menu.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('menu-container').innerHTML = data;
+        });
+</script>
+
     <h1>Welcome to the Teacher Testing Site</h1>
     <p>This site is designed for creating and managing tests for students.</p>
     <p><a href="test.html">Start the Kinematics and Math Test</a></p>
