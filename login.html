@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Test Site - Login</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+    <h1>Добро пожаловать! Войдите через Google</h1>
+    <!-- Кнопка для входа через Google -->
+    <button id="googleSignInBtn">Войти с помощью Google</button>
+
+    <!-- Отображение информации о пользователе -->
+    <div id="profileInfo" style="display: none;">
+        <h3>Добро пожаловать, <span id="userName"></span>!</h3>
+        <img id="userImage" src="" alt="Фото профиля" width="100"><br>
+        <button id="signOutBtn">Выйти</button>
+    </div>
+
+    <script>
+        let googleUser = {};
+
+        // Функция для обработки успешного входа
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            var userName = profile.getName();
+            var userImage = profile.getImageUrl();
+            var userEmail = profile.getEmail();
+
+            // Отображение информации о пользователе
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('userImage').src = userImage;
+            document.getElementById('profileInfo').style.display = 'block';
+            document.getElementById('googleSignInBtn').style.display = 'none';
+
+            // Сохраняем данные в `localStorage` для использования на других страницах
+            localStorage.setItem("userName", userName);
+            localStorage.setItem("userEmail", userEmail);
+
+            console.log("Пользователь вошёл: ", userName);
+
+            // Переход на главную страницу после входа
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 3000);
+        }
+
+        // Функция для выхода
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+                console.log('Пользователь вышел.');
+                document.getElementById('profileInfo').style.display = 'none';
+                document.getElementById('googleSignInBtn').style.display = 'block';
+            });
+        }
+
+        // Инициализация Google OAuth
+        function initGoogleAuth() {
+            gapi.load('auth2', function() {
+                gapi.auth2.init({
+                    client_id: '11087384827-32a8atfpptsfpv82d1jgemsb69du4q34.apps.googleusercontent.com'
+                }).then(function(auth2) {
+                    var signInBtn = document.getElementById('googleSignInBtn');
+                    signInBtn.onclick = function() {
+                        auth2.signIn().then(onSignIn);
+                    };
+                });
+            });
+        }
+
+        // Вызов инициализации при загрузке страницы
+        window.onload = function() {
+            initGoogleAuth();
+            document.getElementById('signOutBtn').onclick = signOut;
+        }
+    </script>
+</body>
+</html>
