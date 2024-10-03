@@ -4,28 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Test Site - Login</title>
-    <!-- Подключаем Google API -->
+    <!-- Подключаем Google API для работы с OAuth -->
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <!-- Настройки Google Sign-In -->
-    <meta name="google-signin-client_id" content="ВАШ_CLIENT_ID.apps.googleusercontent.com">
+    <!-- Указываем Google Client ID для приложения -->
+    <meta name="google-signin-client_id" content="11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com">
     <style>
-        /* Стили для корректного отображения */
+        /* Простые стили для элементов */
         .g-signin2 {
             margin: 20px 0;
+        }
+        .content {
+            text-align: center;
+            margin-top: 50px;
+        }
+        #signOutBtn {
+            margin: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Добро пожаловать! Войдите через Google</h1>
-    <!-- Стандартная кнопка входа Google -->
-    <div class="g-signin2" data-onsuccess="onSignIn" data-theme="light"></div>
-    <div id="status">Ожидание загрузки Google API...</div>
-    <button id="signOutBtn" style="display:none;">Выйти</button>
+    <div class="content">
+        <h1>Добро пожаловать! Войдите через Google</h1>
+        <!-- Стандартная кнопка Google Sign-In -->
+        <div class="g-signin2" data-onsuccess="onSignIn" data-theme="light"></div>
+        <div id="status">Ожидание загрузки Google API...</div>
+        <button id="signOutBtn" style="display:none;">Выйти</button>
+    </div>
 
     <script>
-        // Обработчик успешного входа
+        // Обработчик успешного входа пользователя
         function onSignIn(googleUser) {
-            console.log("onSignIn вызван!");  // Проверка вызова функции
+            console.log("onSignIn вызван!");  // Для проверки в консоли
+
+            // Получаем профиль пользователя
             var profile = googleUser.getBasicProfile();
             var userName = profile.getName();
             var userEmail = profile.getEmail();
@@ -33,13 +44,14 @@
             // Обновляем интерфейс после успешного входа
             document.getElementById('status').textContent = `Добро пожаловать, ${userName}! Ваш email: ${userEmail}`;
             
-            // Скрываем кнопку входа Google
+            // Скрываем кнопку входа Google после входа
             var googleButton = document.querySelector('.g-signin2');
             if (googleButton) googleButton.style.display = 'none';
 
-            // Отображаем кнопку выхода
-            document.getElementById('signOutBtn').style.display = 'inline';
-            document.getElementById('signOutBtn').onclick = signOut;
+            // Показываем кнопку выхода
+            var signOutBtn = document.getElementById('signOutBtn');
+            signOutBtn.style.display = 'inline';
+            signOutBtn.onclick = signOut;
 
             console.log("Пользователь вошёл: ", userName, userEmail);
         }
@@ -61,7 +73,7 @@
         // Проверка инициализации Google API
         window.onload = function() {
             console.log("Проверка загрузки Google API...");
-
+            
             if (typeof gapi !== 'undefined') {
                 console.log("Google API загружен и готов к использованию.");
                 document.getElementById('status').textContent = "Google API загружен. Пожалуйста, войдите через Google.";
