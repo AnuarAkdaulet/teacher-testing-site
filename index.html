@@ -101,5 +101,25 @@
             loadPage('home.html');
         });
     </script>
+
+    <script>
+function loadPage(page) {
+    fetch(page)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('content-container').innerHTML = data;
+
+            // Проверяем доступность функции после загрузки новой страницы
+            console.log("Page loaded:", page);
+            console.log("typeof checkAnswers:", typeof checkAnswers); // Проверка доступности функции checkAnswers
+        });
+}
+
+// Загрузка домашней страницы по умолчанию
+document.addEventListener("DOMContentLoaded", function () {
+    loadPage('home.html');
+});
+</script>
+
 </body>
 </html>
