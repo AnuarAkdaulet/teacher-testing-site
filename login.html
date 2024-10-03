@@ -4,49 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Test Site - Login</title>
-    <!-- Подключение нового API Google Identity Services -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
     <h1>Добро пожаловать! Войдите через Google</h1>
-    <!-- Новый элемент для кнопки входа Google -->
-    <div id="g_id_onload"
-        data-client_id="11087384827-32a8atfpptsfpv82d1jgemsb69du4q34.apps.googleusercontent.com"
-        data-login_uri="https://anuarakdaulet.github.io/teacher-testing-site/callback"
-        data-auto_prompt="false">
-    </div>
-    <div class="g_id_signin"
-        data-type="standard"
-        data-size="large"
-        data-theme="outline"
-        data-text="signin_with"
-        data-shape="rectangular"
-        data-logo_alignment="left">
-    </div>
+    <button id="googleSignInBtn">Войти с помощью Google</button>
     <div id="status">Ожидание загрузки Google API...</div>
 
     <script>
-        // Функция обратного вызова для обработки успешного входа
-        function handleCredentialResponse(response) {
-            console.log("Encoded JWT ID token: " + response.credential);
-            document.getElementById('status').textContent = `Пользователь вошёл успешно. ID токен: ${response.credential}`;
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            var userName = profile.getName();
+            var userEmail = profile.getEmail();
+
+            // Обновляем интерфейс после успешного входа
+            document.getElementById('status').textContent = `Добро пожаловать, ${userName}! Ваш email: ${userEmail}`;
+            document.getElementById('googleSignInBtn').style.display = 'none';  // Скрываем кнопку входа
+
+            console.log("Пользователь вошёл: ", userName);
+        }
+
+        function initGoogleAuth() {
+            gapi.load('auth2', function() {
+                console.log("Google API загружен и инициализирован.");
+                
+                gapi.auth2.init({
+                    client_id: '11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com'  // Убедитесь, что client_id указан правильно
+                }).then(function(auth2) {
+                    console.log("Google Auth успешно инициализирован.");
+                    var signInBtn = document.getElementById('googleSignInBtn');
+                    
+                    // Привязываем кнопку входа
+                    signInBtn.onclick = function() {
+                        auth2.signIn().then(onSignIn).catch(function(error) {
+                            console.error("Ошибка при входе:", error);
+                        });
+                    };
+
+                    // Проверяем, если пользователь уже вошёл, обновляем интерфейс
+                    if (auth2.isSignedIn.get()) {
+                        onSignIn(auth2.currentUser.get());
+                    }
+                }).catch(function(error) {
+                    console.error("Ошибка инициализации Google Auth:", error);
+                });
+            });
         }
 
         window.onload = function() {
-            // Регистрация обработчика обратного вызова
-            google.accounts.id.initialize({
-                client_id: '11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com',
-                callback: handleCredentialResponse
-            });
-
-            // Отображение кнопки входа
-            google.accounts.id.renderButton(
-                document.getElementsByClassName("g_id_signin")[0],
-                { theme: "outline", size: "large" }
-            );
-
-            // Автоматическая подсказка при загрузке страницы (опционально)
-            google.accounts.id.prompt();
+            console.log("Проверка загрузки Google API...");
+            
+            if (typeof gapi !== 'undefined') {
+                initGoogleAuth();
+            } else {
+                console.error("Google API не загружен. Убедитесь, что скрипт platform.js правильно подключён.");
+                document.getElementById('status').textContent = "Ошибка: Google API не загружен.";
+            }
         };
     </script>
 </body>
