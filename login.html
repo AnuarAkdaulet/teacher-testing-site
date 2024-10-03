@@ -24,23 +24,17 @@
         }
 
         function initGoogleAuth() {
-            if (gapi.auth2.getAuthInstance()) {
-                console.log("gapi.auth2 уже инициализирован, используем существующий экземпляр.");
-                var auth2 = gapi.auth2.getAuthInstance();
-
-                var signInBtn = document.getElementById('googleSignInBtn');
-                signInBtn.onclick = function() {
-                    auth2.signIn().then(onSignIn).catch(function(error) {
-                        console.error("Ошибка при входе:", error);
-                    });
-                };
-            } else {
+            // Загружаем и инициализируем Google API
+            gapi.load('auth2', function() {
+                console.log("Google API загружен и инициализирован.");
+                
                 gapi.auth2.init({
-                    client_id: 'ВАШ_CLIENT_ID.apps.googleusercontent.com'
+                    client_id: 'ВАШ_CLIENT_ID.apps.googleusercontent.com'  // Убедитесь, что client_id указан правильно
                 }).then(function(auth2) {
                     console.log("Google Auth успешно инициализирован.");
-                    
                     var signInBtn = document.getElementById('googleSignInBtn');
+                    
+                    // Привязываем кнопку входа
                     signInBtn.onclick = function() {
                         auth2.signIn().then(onSignIn).catch(function(error) {
                             console.error("Ошибка при входе:", error);
@@ -49,15 +43,18 @@
                 }).catch(function(error) {
                     console.error("Ошибка инициализации Google Auth:", error);
                 });
-            }
+            });
         }
 
         window.onload = function() {
-            if (typeof gapi === 'undefined') {
+            console.log("Проверка загрузки Google API...");
+            
+            if (typeof gapi !== 'undefined') {
+                // Если gapi загружен, инициализируем Google Auth
+                initGoogleAuth();
+            } else {
                 console.error("Google API не загружен. Убедитесь, что скрипт platform.js правильно подключён.");
                 document.getElementById('status').textContent = "Ошибка: Google API не загружен.";
-            } else {
-                initGoogleAuth();
             }
         };
     </script>
