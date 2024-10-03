@@ -15,7 +15,7 @@
             justify-content: space-between;
             align-items: center;
             background-color: #333;
-            padding: px px
+            padding: 10px 20px; /* Исправлено */
             position: sticky;
             top: 0;
             z-index: 10;
@@ -23,7 +23,7 @@
         .navbar a {
             color: white;
             text-decoration: none;
-            padding: px px;
+            padding: 10px 20px; /* Исправлено */
         }
         .navbar a:hover {
             background-color: #575757;
@@ -81,11 +81,6 @@
         <p>Use the menu above to navigate.</p>
     </div>
 
-    <!-- Футер 
-    <footer>
-        <p>© 2024 My Teaching Site. All rights reserved.</p>
-    </footer> -->
-
     <!-- Подключение JavaScript для загрузки страниц -->
     <script>
         function loadPage(page) {
@@ -93,33 +88,17 @@
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('content-container').innerHTML = data;
+
+                    // Проверяем доступность функции после загрузки новой страницы
+                    console.log("Page loaded:", page);
+                    console.log("typeof checkAnswers:", typeof checkAnswers);
                 });
         }
 
         // Автоматически загружаем домашнюю страницу при загрузке
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             loadPage('home.html');
         });
     </script>
-
-    <script>
-function loadPage(page) {
-    fetch(page)
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('content-container').innerHTML = data;
-
-            // Проверяем доступность функции после загрузки новой страницы
-            console.log("Page loaded:", page);
-            console.log("typeof checkAnswers:", typeof checkAnswers); // Проверка доступности функции checkAnswers
-        });
-}
-
-// Загрузка домашней страницы по умолчанию
-document.addEventListener("DOMContentLoaded", function () {
-    loadPage('home.html');
-});
-</script>
-
 </body>
 </html>
