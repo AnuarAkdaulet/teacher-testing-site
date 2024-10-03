@@ -99,6 +99,23 @@
         document.addEventListener("DOMContentLoaded", function () {
             loadPage('home.html');
         });
+      <script>
+        function checkAnswers() {
+            var form = document.getElementById('testForm');
+            var correctAnswers = { q1: "120", q2: "6x", q3: "9.8" };
+            var score = 0;
+            var totalQuestions = Object.keys(correctAnswers).length;
+
+            for (var q in correctAnswers) {
+                if (form[q].value === correctAnswers[q]) {
+                    score++;
+                }
+            }
+
+            var resultDiv = document.getElementById('result');
+            resultDiv.textContent = "Your score: " + score + " out of " + totalQuestions;
+        }
+    </script>  
     </script>
 </body>
 </html>
