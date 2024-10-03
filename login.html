@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Test Site - Login</title>
-   <!-- <script src="https://apis.google.com/js/platform.js" async defer></script> -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
     <h1>Добро пожаловать! Войдите через Google</h1>
@@ -13,7 +13,6 @@
 
     <script>
         function onSignIn(googleUser) {
-            console.log("Функция onSignIn вызвана!");
             var profile = googleUser.getBasicProfile();
             var userName = profile.getName();
             var userEmail = profile.getEmail();
@@ -21,22 +20,19 @@
             // Отображение информации о пользователе
             document.getElementById('status').textContent = `Добро пожаловать, ${userName}! Ваш email: ${userEmail}`;
             document.getElementById('googleSignInBtn').style.display = 'none';
+
             console.log("Пользователь вошёл: ", userName);
         }
 
         function initGoogleAuth() {
-            console.log("Попытка загрузки Google Auth...");
-
             gapi.load('auth2', function() {
-                console.log("gapi.load завершён!");
                 gapi.auth2.init({
-                    client_id: 'client_id":"11087384827-32a8atfpptsfpv82d1jgemsb69du4q34.apps.googleusercontent.com.apps.googleusercontent.com'  // Убедитесь, что client_id указан правильно
+                    client_id: 'client_id":"11087384827-32a8atfpptsfpv82d1jgemsb69du4q34.apps.googleusercontent.com'  // Убедитесь, что здесь указан ваш Client ID!
                 }).then(function(auth2) {
                     console.log("Google Auth успешно инициализирован.");
 
                     var signInBtn = document.getElementById('googleSignInBtn');
                     signInBtn.onclick = function() {
-                        console.log("Кнопка 'Войти с помощью Google' нажата.");
                         auth2.signIn().then(onSignIn).catch(function(error) {
                             console.error("Ошибка при входе:", error);
                         });
@@ -48,31 +44,13 @@
         }
 
         window.onload = function() {
-            console.log("Инициализация после загрузки страницы...");
             if (typeof gapi === 'undefined') {
                 console.error("Google API не загружен. Убедитесь, что скрипт platform.js правильно подключён.");
                 document.getElementById('status').textContent = "Ошибка: Google API не загружен.";
             } else {
-                document.getElementById('status').textContent = "Google API загружен.";
                 initGoogleAuth();
             }
         };
-    </script
-        <script>
-    var script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/platform.js';
-    script.onload = function() {
-        console.log("Google API загружен вручную!");
-        if (typeof gapi !== 'undefined') {
-            gapi.load('auth2', function() {
-                console.log("gapi.auth2 загружен вручную.");
-            });
-        } else {
-            console.error("Google API не загружен.");
-        }
-    };
-    document.head.appendChild(script);
-</script>
-
+    </script>
 </body>
 </html>
