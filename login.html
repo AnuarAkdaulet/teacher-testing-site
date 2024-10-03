@@ -7,7 +7,7 @@
     <!-- Подключаем Google API -->
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <!-- Настройки Google Sign-In -->
-    <meta name="google-signin-client_id" content="11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="ВАШ_CLIENT_ID.apps.googleusercontent.com">
     <style>
         /* Стили для корректного отображения */
         .g-signin2 {
@@ -17,7 +17,7 @@
 </head>
 <body>
     <h1>Добро пожаловать! Войдите через Google</h1>
-    <!-- Используем стандартную кнопку Google Sign-In -->
+    <!-- Стандартная кнопка входа Google -->
     <div class="g-signin2" data-onsuccess="onSignIn" data-theme="light"></div>
     <div id="status">Ожидание загрузки Google API...</div>
     <button id="signOutBtn" style="display:none;">Выйти</button>
@@ -25,6 +25,7 @@
     <script>
         // Обработчик успешного входа
         function onSignIn(googleUser) {
+            console.log("onSignIn вызван!");  // Проверка вызова функции
             var profile = googleUser.getBasicProfile();
             var userName = profile.getName();
             var userEmail = profile.getEmail();
@@ -40,7 +41,7 @@
             document.getElementById('signOutBtn').style.display = 'inline';
             document.getElementById('signOutBtn').onclick = signOut;
 
-            console.log("Пользователь вошёл: ", userName);
+            console.log("Пользователь вошёл: ", userName, userEmail);
         }
 
         // Функция выхода из аккаунта
@@ -61,7 +62,6 @@
         window.onload = function() {
             console.log("Проверка загрузки Google API...");
 
-            // Проверка корректной загрузки Google API
             if (typeof gapi !== 'undefined') {
                 console.log("Google API загружен и готов к использованию.");
                 document.getElementById('status').textContent = "Google API загружен. Пожалуйста, войдите через Google.";
