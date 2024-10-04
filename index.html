@@ -3,79 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Test Site - Home</title>
+    <title>Teacher Test Site - Template</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        body, html {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            font-family: Arial, sans-serif;
         }
-        header {
-            background: #333;
+        nav {
+            background-color: #333;
             color: #fff;
-            padding: 10px 0;
+            padding: 10px;
             text-align: center;
         }
-        nav ul {
-            list-style: none;
-            padding: 0;
-        }
-        nav ul li {
-            display: inline;
-            margin-right: 10px;
-        }
-        nav ul li a {
+        nav a {
+            margin: 0 15px;
+            color: white;
             text-decoration: none;
-            color: #333;
-            background: #f4f4f4;
-            padding: 5px 10px;
-            border-radius: 5px;
         }
-        nav ul li a:hover {
-            background: #ddd;
+        nav a:hover {
+            background: #575757;
         }
-        section {
+        .content {
+            padding: 20px;
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <!-- Заголовок сайта -->
-    <header>
-        <h1>Welcome to the Teacher Test Site!</h1>
-        <p>This is the main page where you can navigate to other sections.</p>
-    </header>
-
     <!-- Общее меню навигации -->
     <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="home.html">Dashboard</a></li>
-            <li><a href="test.html">Test</a></li>
-            <li><a href="login.html">Login</a></li>
-            <li><a href="privacy.html">Privacy Policy</a></li>
-            <li><a href="callback.html">Callback</a></li>
-        </ul>
+        <a href="index.html">Home</a>
+        <a href="home.html" w3-include-html="home.html">Dashboard</a>
+        <a href="test.html" w3-include-html="test.html">Test</a>
+        <a href="login.html" w3-include-html="login.html">Login</a>
+        <a href="privacy.html" w3-include-html="privacy.html">Privacy</a>
+        <a href="callback.html" w3-include-html="callback.html">Callback</a>
     </nav>
 
-    <!-- Основной контент -->
-    <section>
-        <h2>About This Site</h2>
-        <p>This site allows you to conduct tests, track student progress, and manage user profiles. You can navigate to different pages using the menu above.</p>
-    </section>
+    <!-- Основной контейнер для динамического содержимого -->
+    <div class="content">
+        <div w3-include-html="home.html"></div>
+    </div>
 
-    <!-- Описание каждой страницы -->
-    <section>
-        <h2>Pages Overview</h2>
-        <ul>
-            <li><strong>Home (index.html):</strong> Main landing page of the site.</li>
-            <li><strong>Dashboard (home.html):</strong> Centralized view for teachers to manage content.</li>
-            <li><strong>Test (test.html):</strong> Take a test and view your results.</li>
-            <li><strong>Login (login.html):</strong> Login with Google to access personalized features.</li>
-            <li><strong>Privacy (privacy.html):</strong> View our privacy policy.</li>
-            <li><strong>Callback (callback.html):</strong> Handles the Google login callback.</li>
-        </ul>
-    </section>
+    <!-- Скрипт для загрузки HTML-фрагментов -->
+    <script>
+        function includeHTML() {
+            var elements, i, element, file, xhttp;
+            elements = document.querySelectorAll("[w3-include-html]");
+            for (i = 0; i < elements.length; i++) {
+                element = elements[i];
+                file = element.getAttribute("w3-include-html");
+                if (file) {
+                    xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            element.innerHTML = this.responseText;
+                            element.removeAttribute("w3-include-html");
+                            includeHTML(); // Рекурсивно загружаем другие элементы
+                        }
+                    };
+                    xhttp.open("GET", file, true);
+                    xhttp.send();
+                }
+            }
+        }
+        includeHTML();
+    </script>
 </body>
 </html>
