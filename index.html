@@ -3,118 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Test Site</title>
+    <title>Teacher Test Site - Test</title>
     <style>
         body, html {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
         }
-        nav {
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            text-align: center;
-        }
-        nav a {
-            margin: 0 15px;
-            color: white;
-            text-decoration: none;
-        }
-        nav a:hover {
-            background: #575757;
-        }
         .content {
             padding: 20px;
-            margin-top: 20px;
-        }
-        .page {
-            display: none; /* Скрываем все страницы по умолчанию */
-        }
-        .active {
-            display: block; /* Отображаем только активную страницу */
+            margin-top: 60px;
         }
     </style>
 </head>
 <body>
-    <!-- Верхнее меню навигации -->
-    <nav>
-        <a href="#" onclick="showPage('home')">Home</a>
-        <a href="#" onclick="showPage('dashboard')">Dashboard</a>
-        <a href="#" onclick="showPage('test')">Test</a>
-        <a href="#" onclick="showPage('login')">Login</a>
-        <a href="#" onclick="showPage('privacy')">Privacy Policy</a>
-        <a href="#" onclick="showPage('callback')">Callback</a>
+    <!-- Фиксированное меню -->
+    <nav class="navbar">
+        <a href="index.html">Home</a>
+        <a href="home.html">Dashboard</a>
+        <a href="test.html">Test</a>
+        <a href="login.html">Login</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="callback.html">Callback</a>
     </nav>
 
-    <!-- Контейнер для динамических страниц -->
     <div class="content">
-        <!-- Главная страница -->
-        <div id="home" class="page active">
-            <h1>Welcome to the Teacher Test Site!</h1>
-            <p>This is the main page where you can navigate to other sections.</p>
-        </div>
+        <h1>Take a Test</h1>
+        <form id="test-form">
+            <div>
+                <h2>Question 1: What is the capital of France?</h2>
+                <input type="radio" name="q1" value="Paris"> Paris<br>
+                <input type="radio" name="q1" value="London"> London<br>
+                <input type="radio" name="q1" value="Berlin"> Berlin<br>
+            </div>
 
-        <!-- Дашборд -->
-        <div id="dashboard" class="page">
-            <h1>Dashboard</h1>
-            <p>This is the dashboard content for managing the site.</p>
-        </div>
+            <div>
+                <h2>Question 2: What is 2 + 2?</h2>
+                <input type="radio" name="q2" value="3"> 3<br>
+                <input type="radio" name="q2" value="4"> 4<br>
+                <input type="radio" name="q2" value="5"> 5<br>
+            </div>
 
-        <!-- Страница тестов -->
-        <div id="test" class="page">
-            <div w3-include-html="test.html"></div>
-        </div>
+            <button type="button" onclick="calculateScore()">Submit</button>
+        </form>
 
-        <!-- Страница логина -->
-        <div id="login" class="page">
-            <div w3-include-html="login.html"></div>
-        </div>
-
-        <!-- Страница политики конфиденциальности -->
-        <div id="privacy" class="page">
-            <div w3-include-html="privacy.html"></div>
-        </div>
-
-        <!-- Страница Callback -->
-        <div id="callback" class="page">
-            <div w3-include-html="callback.html"></div>
-        </div>
+        <div id="result"></div>
     </div>
 
-    <!-- Скрипт для загрузки HTML-фрагментов -->
     <script>
-        function includeHTML() {
-            var elements, i, element, file, xhttp;
-            elements = document.querySelectorAll("[w3-include-html]");
-            for (i = 0; i < elements.length; i++) {
-                element = elements[i];
-                file = element.getAttribute("w3-include-html");
-                if (file) {
-                    xhttp = new XMLHttpRequest();
-                    xhttp.onreadystatechange = function () {
-                        if (this.readyState == 4 && this.status == 200) {
-                            element.innerHTML = this.responseText;
-                            element.removeAttribute("w3-include-html");
-                            includeHTML(); // Рекурсивно загружаем другие элементы
-                        }
-                    };
-                    xhttp.open("GET", file, true);
-                    xhttp.send();
-                }
-            }
-        }
-        includeHTML();
+        function calculateScore() {
+            var score = 0;
+            var form = document.getElementById('test-form');
 
-        // Функция для переключения страниц
-        function showPage(pageId) {
-            // Скрыть все элементы с классом "page"
-            var pages = document.getElementsByClassName('page');
-            for (var i = 0; i < pages.length; i++) {
-                pages[i].classList.remove('active');
-            }
-            // Показать только выбранную страницу
-            document.getElementById(pageId).classList.add('active');
+            // Проверка выбранных ответов
+            if (form.q1.value === "Paris") score++;
+            if (form.q2.value === "4") score++;
+
+            // Вывод результатов
+            document.getElementById('result').textContent = `Your score is: ${score} out of 2.`;
         }
     </script>
 </body>
