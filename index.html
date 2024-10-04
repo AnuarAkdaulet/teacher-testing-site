@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Test Site - Template</title>
+    <title>Teacher Test Site</title>
     <style>
         body, html {
             margin: 0;
@@ -28,22 +28,58 @@
             padding: 20px;
             margin-top: 20px;
         }
+        .page {
+            display: none; /* Скрываем все страницы по умолчанию */
+        }
+        .active {
+            display: block; /* Отображаем только активную страницу */
+        }
     </style>
 </head>
 <body>
-    <!-- Общее меню навигации -->
+    <!-- Верхнее меню навигации -->
     <nav>
-        <a href="index.html">Home</a>
-        <a href="home.html" w3-include-html="home.html">Dashboard</a>
-        <a href="test.html" w3-include-html="test.html">Test</a>
-        <a href="login.html" w3-include-html="login.html">Login</a>
-        <a href="privacy.html" w3-include-html="privacy.html">Privacy</a>
-        <a href="callback.html" w3-include-html="callback.html">Callback</a>
+        <a href="#" onclick="showPage('home')">Home</a>
+        <a href="#" onclick="showPage('dashboard')">Dashboard</a>
+        <a href="#" onclick="showPage('test')">Test</a>
+        <a href="#" onclick="showPage('login')">Login</a>
+        <a href="#" onclick="showPage('privacy')">Privacy Policy</a>
+        <a href="#" onclick="showPage('callback')">Callback</a>
     </nav>
 
-    <!-- Основной контейнер для динамического содержимого -->
+    <!-- Контейнер для динамических страниц -->
     <div class="content">
-        <div w3-include-html="home.html"></div>
+        <!-- Главная страница -->
+        <div id="home" class="page active">
+            <h1>Welcome to the Teacher Test Site!</h1>
+            <p>This is the main page where you can navigate to other sections.</p>
+        </div>
+
+        <!-- Дашборд -->
+        <div id="dashboard" class="page">
+            <h1>Dashboard</h1>
+            <p>This is the dashboard content for managing the site.</p>
+        </div>
+
+        <!-- Страница тестов -->
+        <div id="test" class="page">
+            <div w3-include-html="test.html"></div>
+        </div>
+
+        <!-- Страница логина -->
+        <div id="login" class="page">
+            <div w3-include-html="login.html"></div>
+        </div>
+
+        <!-- Страница политики конфиденциальности -->
+        <div id="privacy" class="page">
+            <div w3-include-html="privacy.html"></div>
+        </div>
+
+        <!-- Страница Callback -->
+        <div id="callback" class="page">
+            <div w3-include-html="callback.html"></div>
+        </div>
     </div>
 
     <!-- Скрипт для загрузки HTML-фрагментов -->
@@ -69,6 +105,17 @@
             }
         }
         includeHTML();
+
+        // Функция для переключения страниц
+        function showPage(pageId) {
+            // Скрыть все элементы с классом "page"
+            var pages = document.getElementsByClassName('page');
+            for (var i = 0; i < pages.length; i++) {
+                pages[i].classList.remove('active');
+            }
+            // Показать только выбранную страницу
+            document.getElementById(pageId).classList.add('active');
+        }
     </script>
 </body>
 </html>
