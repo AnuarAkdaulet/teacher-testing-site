@@ -13,33 +13,43 @@
     </style>
 </head>
 <body>
-    <h1>Kinematics and Math Test</h1>
-    <form id="testForm">
-        <div class="question">
-            <p class="question-number">1. A car travels at a constant speed of 60 km/h. How far does it travel in 2 hours?</p>
-            <label><input type="radio" name="q1" value="120"> 120 km</label><br>
-            <label><input type="radio" name="q1" value="100"> 100 km</label><br>
-            <label><input type="radio" name="q1" value="150"> 150 km</label><br>
-        </div>
+    <h1>Kinematics and Math Test</h1><div class="content">
+        <h1>Take a Test</h1>
+        <form id="test-form">
+            <div>
+                <h2>Question 1: What is the capital of France?</h2>
+                <input type="radio" name="q1" value="Paris"> Paris<br>
+                <input type="radio" name="q1" value="London"> London<br>
+                <input type="radio" name="q1" value="Berlin"> Berlin<br>
+            </div>
 
-        <div class="question">
-            <p class="question-number">2. What is the derivative of the function f(x) = 3x²?</p>
-            <label><input type="radio" name="q2" value="6x"> 6x</label><br>
-            <label><input type="radio" name="q2" value="3x"> 3x</label><br>
-            <label><input type="radio" name="q2" value="2x"> 2x</label><br>
-        </div>
+            <div>
+                <h2>Question 2: What is 2 + 2?</h2>
+                <input type="radio" name="q2" value="3"> 3<br>
+                <input type="radio" name="q2" value="4"> 4<br>
+                <input type="radio" name="q2" value="5"> 5<br>
+            </div>
 
-        <div class="question">
-            <p class="question-number">3. An object is in free fall. What is its acceleration if air resistance is neglected?</p>
-            <label><input type="radio" name="q3" value="9.8"> 9.8 m/s²</label><br>
-            <label><input type="radio" name="q3" value="8.9"> 8.9 m/s²</label><br>
-            <label><input type="radio" name="q3" value="10"> 10 m/s²</label><br>
-        </div>
+            <button type="button" onclick="calculateScore()">Submit</button>
+        </form>
 
-        <button type="button" class="button" onclick="checkAnswers()">Submit</button>
-    </form>
-    
-    <div class="result" id="result"></div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function calculateScore() {
+            var score = 0;
+            var form = document.getElementById('test-form');
+
+            // Проверка выбранных ответов
+            if (form.q1.value === "Paris") score++;
+            if (form.q2.value === "4") score++;
+
+            // Вывод результатов
+            document.getElementById('result').textContent = `Your score is: ${score} out of 2.`;
+        }
+    </script>
+
     
 </body>
 </html>
