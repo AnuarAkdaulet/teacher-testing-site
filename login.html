@@ -3,118 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Test Site</title>
+    <title>Teacher Test Site - Login</title>
+    <!-- Подключение Google API -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com">
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
+        .g-signin2 {
+            margin-top: 20px;
         }
-        .navbar {
-            background-color: #333;
-            color: #fff;
-            padding: 10px 0;
-            text-align: center;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-
-        .navbar a {
-            margin: 0 15px;
-            color: white;
-            text-decoration: none;
-        }
-        .navbar a:hover {
-            background: #575757;
-            color: white;
-        }
-
         .content {
             padding: 60px 20px;
-            margin-top: 50px;
+        }
+        body, html {
+            font-family: Arial, sans-serif;
         }
     </style>
-    <!-- Скрипт Google API с управлением загрузкой -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
-    <!-- Фиксированное меню навигации -->
-    <nav class="navbar">
-        <a href="index.html?page=home.html">Home</a>
-        <a href="index.html?page=test.html">Test</a>
-        <a href="index.html?page=login.html">Login</a>
-        <a href="index.html?page=privacy.html">Privacy Policy</a>
-        <a href="index.html?page=callback.html">Callback</a>
-    </nav>
-
-    <!-- Основной блок контента -->
     <div class="content">
-        <div id="main-content"></div>
+        <h1>Login Page</h1>
+        <!-- Контейнер для кнопки входа через Google -->
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <div id="login-status"></div>
     </div>
 
-    <!-- Скрипт для динамической подгрузки страниц -->
+    <!-- Скрипт для обработки Google Sign-In -->
     <script>
-        let gapiLoaded = false; // Флаг для проверки загрузки gapi
+        function onSignIn(googleUser) {
+            // Получение профиля пользователя
+            var profile = googleUser.getBasicProfile();
+            var name = profile.getName();
+            var email = profile.getEmail();
 
-        // Обработка загрузки Google API
-        window.onload = function () {
-            if (typeof gapi !== 'undefined') {
-                gapi.load('auth2', function() {
-                    gapiLoaded = true; // Флаг, что gapi загружен
-                    console.log("Google API полностью загружен и готов.");
-                    initializePage(); // Инициализация после загрузки gapi
-                });
-            } else {
-                console.error("Google API не загружен. Проверьте подключение скрипта platform.js.");
-            }
-        };
-
-        // Функция для загрузки контента из внешних файлов
-        function loadContent(file) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById("main-content").innerHTML = data;
-                    initializePage(); // Инициализация после загрузки контента
-                })
-                .catch(error => console.error('Ошибка загрузки контента:', error));
+            // Отображение статуса входа
+            document.getElementById('login-status').innerHTML = `
+                <p>Welcome, ${name}!</p>
+                <p>Your email: ${email}</p>
+                <button onclick="signOut()">Sign out</button>
+            `;
         }
 
-        // Автоматическая загрузка страницы в зависимости от параметра
-        const urlParams = new URLSearchParams(window.location.search);
-        const page = urlParams.get('page') || 'home.html'; // Если параметра `page` нет, загружаем `home.html`
-        loadContent(page);
-
-        // Функция инициализации страницы после загрузки контента
-        function initializePage() {
-            if (document.querySelector('#test-form')) {
-                document.querySelector('button[type="button"]').onclick = calculateScore;
-            }
-
-            // Инициализация Google Auth только если gapi загружен и есть кнопка логина
-            if (document.querySelector('.g-signin2') && gapiLoaded) {
-                gapi.auth2.init({
-                    client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
-                }).then(function () {
-                    console.log("Google Auth инициализирован.");
-                });
-            } else if (document.querySelector('.g-signin2') && !gapiLoaded) {
-                console.warn("Google API ещё не загружен. Ожидание...");
-            }
-        }
-
-        // Функция для теста
-        function calculateScore() {
-            var score = 0;
-            var form = document.getElementById('test-form');
-
-            // Проверка выбранных ответов
-            if (form.q1.value === "Paris") score++;
-            if (form.q2.value === "4") score++;
-
-            document.getElementById('result').textContent = `Your score is: ${score} out of 2.`;
+        // Функция для выхода из системы
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+                document.getElementById('login-status').innerHTML = '<p>You have been signed out.</p>';
+            });
         }
     </script>
 </body>
