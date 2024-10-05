@@ -36,11 +36,11 @@
             margin-top: 50px;
         }
     </style>
-    <!-- Скрипт Google API с управлением загрузкой -->
+    <!-- Подключение Google API для динамической загрузки -->
     <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
-    <!-- Фиксированное меню навигации -->
+    <!-- Верхнее меню навигации -->
     <nav class="navbar">
         <a href="index.html?page=home.html">Home</a>
         <a href="index.html?page=test.html">Test</a>
@@ -56,28 +56,13 @@
 
     <!-- Скрипт для динамической подгрузки страниц -->
     <script>
-        let gapiLoaded = false; // Флаг для проверки загрузки gapi
-
-        // Обработка загрузки Google API
-        window.onload = function () {
-            if (typeof gapi !== 'undefined') {
-                gapi.load('auth2', function() {
-                    gapiLoaded = true; // Флаг, что gapi загружен
-                    console.log("Google API полностью загружен и готов.");
-                    initializePage(); // Инициализация после загрузки gapi
-                });
-            } else {
-                console.error("Google API не загружен. Проверьте подключение скрипта platform.js.");
-            }
-        };
-
         // Функция для загрузки контента из внешних файлов
         function loadContent(file) {
             fetch(file)
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById("main-content").innerHTML = data;
-                    initializePage(); // Инициализация после загрузки контента
+                    initializePage(); // Инициализация скриптов после загрузки
                 })
                 .catch(error => console.error('Ошибка загрузки контента:', error));
         }
@@ -87,34 +72,23 @@
         const page = urlParams.get('page') || 'home.html'; // Если параметра `page` нет, загружаем `home.html`
         loadContent(page);
 
-        // Функция инициализации страницы после загрузки контента
+        // Функция инициализации страницы после подгрузки
         function initializePage() {
-            if (document.querySelector('#test-form')) {
-                document.querySelector('button[type="button"]').onclick = calculateScore;
-            }
+            console.log("initializePage вызвана");
 
-            // Инициализация Google Auth только если gapi загружен и есть кнопка логина
-            if (document.querySelector('.g-signin2') && gapiLoaded) {
-                gapi.auth2.init({
-                    client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
-                }).then(function () {
-                    console.log("Google Auth инициализирован.");
+            if (document.querySelector('.g-signin2')) {
+                console.log("g-signin2 элемент найден. Инициализируем Google API.");
+                // Инициализация Google API заново
+                gapi.load('auth2', function() {
+                    gapi.auth2.init({
+                        client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
+                    }).then(function () {
+                        console.log("Google API повторно инициализирован после загрузки.");
+                    }).catch(function(error) {
+                        console.error("Ошибка инициализации Google Auth2:", error);
+                    });
                 });
-            } else if (document.querySelector('.g-signin2') && !gapiLoaded) {
-                console.warn("Google API ещё не загружен. Ожидание...");
             }
-        }
-
-        // Функция для теста
-        function calculateScore() {
-            var score = 0;
-            var form = document.getElementById('test-form');
-
-            // Проверка выбранных ответов
-            if (form.q1.value === "Paris") score++;
-            if (form.q2.value === "4") score++;
-
-            document.getElementById('result').textContent = `Your score is: ${score} out of 2.`;
         }
     </script>
 </body>
