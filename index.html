@@ -24,20 +24,20 @@
         .navbar a {
             margin: 0 15px;
             color: white;
-            text-decoration: none;
+            text-decoration: none.
         }
         .navbar a:hover {
             background: #575757;
-            color: white;
+            color: white.
         }
 
         .content {
             padding: 60px 20px;
-            margin-top: 50px;
+            margin-top: 50px.
         }
     </style>
-    <!-- Подключение новой библиотеки Google Identity Services -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Подключение Google API -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
     <!-- Верхнее меню навигации -->
@@ -62,7 +62,8 @@
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById("main-content").innerHTML = data;
-                    initializePage(); // Инициализация скриптов после загрузки
+                    console.log(`Контент загружен: ${file}`);
+                    initializePage(file); // Инициализация скриптов после загрузки
                 })
                 .catch(error => console.error('Ошибка загрузки контента:', error));
         }
@@ -70,11 +71,12 @@
         // Автоматическая загрузка страницы в зависимости от параметра
         const urlParams = new URLSearchParams(window.location.search);
         const page = urlParams.get('page') || 'home.html'; // Если параметра `page` нет, загружаем `home.html`
+        console.log("Параметр page:", page);
         loadContent(page);
 
         // Функция инициализации страницы после подгрузки
-        function initializePage() {
-            console.log("initializePage вызвана");
+        function initializePage(file) {
+            console.log(`initializePage вызвана для файла: ${file}`);
 
             // Привязка функции для теста
             if (document.querySelector('#test-form')) {
@@ -82,45 +84,35 @@
                 document.querySelector('button[type="button"]').onclick = calculateScore;
             }
 
-            // Инициализация Google Identity Services для логина
-            if (document.querySelector('#g_id_onload')) {
-                console.log("Google Sign-In элемент найден. Инициализируем Google Identity Services.");
-
-                google.accounts.id.initialize({
-                    client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-                    callback: handleCredentialResponse
+            // Инициализация Google API для логина
+            if (file.includes('login.html') && document.querySelector('.g-signin2')) {
+                console.log("g-signin2 элемент найден. Инициализируем Google API.");
+                gapi.load('auth2', function() {
+                    gapi.auth2.init({
+                        client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
+                    }).then(function () {
+                        console.log("Google API повторно инициализирован после загрузки login.html.");
+                    }).catch(function(error) {
+                        console.error("Ошибка инициализации Google Auth2:", error);
+                    });
                 });
-
-                google.accounts.id.renderButton(
-                    document.querySelector(".g_id_signin"), // Элемент, где будет кнопка
-                    { theme: "outline", size: "large" } // Параметры кнопки
-                );
-
-                google.accounts.id.prompt(); // Показывает диалог входа, если пользователь не авторизован
+            } else if (file.includes('login.html')) {
+                console.error("Элемент g-signin2 не найден после подгрузки login.html!");
             }
         }
 
-        // Функция для обработки успешного входа
-        function handleCredentialResponse(response) {
-            console.log("Encoded JWT ID token: " + response.credential);
-            const data = jwt_decode(response.credential);
-            console.log("User data:", data);
+        // Функция для расчёта результата теста
+        function calculateScore() {
+            console.log("calculateScore function called!"); // Проверка вызова функции
+            var score = 0;
+            var form = document.getElementById('test-form');
 
-            document.getElementById('login-status').innerHTML = `
-                <p>Welcome, ${data.name}!</p>
-                <p>Your email: ${data.email}</p>
-                <button onclick="signOut()">Sign out</button>
-            `;
-        }
+            // Проверка выбранных ответов
+            if (form.q1.value === "Paris") score++;
+            if (form.q2.value === "4") score++;
 
-        // Функция выхода из системы
-        function signOut() {
-            google.accounts.id.disableAutoSelect();
-            document.getElementById('login-status').innerHTML = '<p>You have been signed out.</p>';
+            document.getElementById('result').textContent = `Your score is: ${score} out of 2.`;
         }
     </script>
-
-    <!-- Подключение JWT библиотеки для расшифровки токена (требуется) -->
-    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 </body>
 </html>
