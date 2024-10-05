@@ -79,47 +79,48 @@
             // Привязка функции для теста
             if (document.querySelector('#test-form')) {
                 console.log("Форма теста найдена. Привязываем кнопку Submit.");
-                document.querySelector('button[type="button"]').onclick = calculateScore; // Привязка функции
+                document.querySelector('button[type="button"]').onclick = calculateScore;
             }
 
-            // Инициализация Google Sign-In для нового API
-            if (document.querySelector('.g-signin2')) {
-                console.log("g-signin2 элемент найден. Инициализируем Google Identity Services.");
-                
+            // Инициализация Google Identity Services для логина
+            if (document.querySelector('#g_id_onload')) {
+                console.log("Google Sign-In элемент найден. Инициализируем Google Identity Services.");
+
                 google.accounts.id.initialize({
-                    client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+                    client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
                     callback: handleCredentialResponse
                 });
 
-                // Отображение кнопки входа
                 google.accounts.id.renderButton(
-                    document.querySelector('.g-signin2'),
-                    { theme: 'outline', size: 'large' }  // Настройки кнопки
+                    document.querySelector(".g_id_signin"), // Элемент, где будет кнопка
+                    { theme: "outline", size: "large" } // Параметры кнопки
                 );
-                
-                google.accounts.id.prompt(); // Показать запрос на вход
+
+                google.accounts.id.prompt(); // Показывает диалог входа, если пользователь не авторизован
             }
         }
 
-        // Обработка успешного входа через Google Identity Services
+        // Функция для обработки успешного входа
         function handleCredentialResponse(response) {
-            console.log("handleCredentialResponse вызвана!");
-            const userObject = jwt_decode(response.credential);
-            console.log("User:", userObject);
-            
-            // Обновление статуса входа
+            console.log("Encoded JWT ID token: " + response.credential);
+            const data = jwt_decode(response.credential);
+            console.log("User data:", data);
+
             document.getElementById('login-status').innerHTML = `
-                <p>Welcome, ${userObject.name}!</p>
-                <p>Your email: ${userObject.email}</p>
+                <p>Welcome, ${data.name}!</p>
+                <p>Your email: ${data.email}</p>
                 <button onclick="signOut()">Sign out</button>
             `;
         }
 
-        // Функция выхода (временная заглушка)
+        // Функция выхода из системы
         function signOut() {
-            console.log("Пользователь вышел.");
+            google.accounts.id.disableAutoSelect();
             document.getElementById('login-status').innerHTML = '<p>You have been signed out.</p>';
         }
     </script>
+
+    <!-- Подключение JWT библиотеки для расшифровки токена (требуется) -->
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 </body>
 </html>
