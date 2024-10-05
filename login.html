@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
+    <!-- Подключение новой библиотеки Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body, html {
@@ -12,13 +13,56 @@
         .content {
             padding: 60px 20px;
         }
+        .g-signin2 {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="content">
         <h1>Login Page</h1>
-        <div class="g-signin2"></div>
+        <!-- Контейнер для Google-кнопки -->
+        <div id="google-button"></div>
         <div id="login-status"></div>
     </div>
+
+    <script>
+        // Инициализация Google Identity Services
+        google.accounts.id.initialize({
+            client_id: '11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com', // Замените на ваш клиент ID
+            callback: handleCredentialResponse
+        });
+
+        // Отображение кнопки входа
+        google.accounts.id.renderButton(
+            document.getElementById('google-button'),
+            { theme: 'outline', size: 'large' }  // Настройки кнопки (можно изменить)
+        );
+
+        // Показать запрос на вход
+        google.accounts.id.prompt();
+
+        // Обработка ответа после успешного входа
+        function handleCredentialResponse(response) {
+            console.log("handleCredentialResponse вызвана!");
+            const userObject = jwt_decode(response.credential);
+            console.log("User:", userObject);
+
+            // Обновление статуса входа
+            document.getElementById('login-status').innerHTML = `
+                <p>Welcome, ${userObject.name}!</p>
+                <p>Your email: ${userObject.email}</p>
+                <button onclick="signOut()">Sign out</button>
+            `;
+        }
+
+        // Функция выхода (заглушка)
+        function signOut() {
+            document.getElementById('login-status').innerHTML = '<p>You have been signed out.</p>';
+            console.log("Пользователь вышел.");
+        }
+    </script>
+    <!-- Скрипт для декодирования JWT (используется для Google Identity Services) -->
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 </body>
 </html>
