@@ -36,8 +36,8 @@
             margin-top: 50px.
         }
     </style>
-    <!-- Подключение Google API -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!-- Подключение Google Identity Services API -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <!-- Верхнее меню навигации -->
@@ -93,54 +93,19 @@
                 document.querySelector('button[type="button"]').onclick = calculateScore;
             }
 
-            // Инициализация Google API для логина после динамической загрузки
+            // Инициализация Google Identity Services для логина после динамической загрузки
             if (file.includes('login.html')) {
-                console.log("Загрузка login.html: проверяем наличие g-signin2.");
-                
-                // Подробная проверка содержимого перед инициализацией
+                console.log("Загрузка login.html: проверяем наличие нового элемента Google Identity Services.");
+
                 setTimeout(function() {
-                    console.log("Содержимое #main-content после подгрузки login.html:", document.getElementById("main-content").innerHTML);
-                    const signInButton = document.querySelector('.g-signin2');
-                    if (signInButton) {
-                        console.log("Элемент g-signin2 найден. Пытаемся инициализировать Google API.");
-
-                        // Проверка состояния Google API
-                        if (typeof gapi !== 'undefined') {
-                            console.log("Google API загружен и доступен. Инициализация auth2.");
-                            initializeGoogleAuth();
-                        } else {
-                            console.error("Google API не загружен. Пробуем загрузить вручную.");
-                            loadGoogleAPIManually();
-                        }
+                    const newGoogleButton = document.getElementById('g_id_onload');
+                    if (newGoogleButton) {
+                        console.log("Элемент g_id_onload найден. Инициализация не требуется.");
                     } else {
-                        console.error("Элемент g-signin2 не найден даже после повторной проверки!");
+                        console.error("Элемент g_id_onload не найден даже после повторной проверки!");
                     }
-                }, 1000); // Увеличение задержки до 1 секунды
+                }, 1000);
             }
-        }
-
-        // Функция ручной загрузки Google API
-        function loadGoogleAPIManually() {
-            const script = document.createElement('script');
-            script.src = 'https://apis.google.com/js/platform.js';
-            script.onload = function() {
-                console.log("Google API загружен вручную.");
-                initializeGoogleAuth();
-            };
-            document.head.appendChild(script);
-        }
-
-        // Функция инициализации Google Auth2
-        function initializeGoogleAuth() {
-            gapi.load('auth2', function() {
-                gapi.auth2.init({
-                    client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
-                }).then(function () {
-                    console.log("Google API инициализирован после загрузки login.html.");
-                }).catch(function(error) {
-                    console.error("Ошибка инициализации Google Auth2:", error);
-                });
-            });
         }
 
         // Функция для расчёта результата теста
