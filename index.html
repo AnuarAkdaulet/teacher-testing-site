@@ -60,14 +60,48 @@
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById("main-content").innerHTML = data;
+                    initializePage(); // Инициализация скриптов после загрузки
                 })
                 .catch(error => console.error('Ошибка загрузки контента:', error));
         }
 
-        // Определяем страницу, которую нужно загрузить по умолчанию (если не указан параметр)
+        // Автоматическая загрузка страницы в зависимости от параметра
         const urlParams = new URLSearchParams(window.location.search);
         const page = urlParams.get('page') || 'home.html'; // Если параметра `page` нет, загружаем `home.html`
         loadContent(page);
+
+        // Инициализация после загрузки контента
+        function initializePage() {
+            if (document.querySelector('#test-form')) {
+                // Привязка функции для теста
+                document.querySelector('button[type="button"]').onclick = calculateScore;
+            }
+            
+            if (document.querySelector('.g-signin2')) {
+                // Инициализация Google API для страницы логина
+                gapi.load('auth2', function() {
+                    gapi.auth2.init({
+                        client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
+                    });
+                });
+            }
+        }
+
+        // Функция для теста
+        function calculateScore() {
+            var score = 0;
+            var form = document.getElementById('test-form');
+
+            // Проверка выбранных ответов
+            if (form.q1.value === "Paris") score++;
+            if (form.q2.value === "4") score++;
+
+            // Отображение результатов
+            document.getElementById('result').textContent = `Your score is: ${score} out of 2.`;
+        }
     </script>
+    
+    <!-- Подключение Google API для логина -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </body>
 </html>
