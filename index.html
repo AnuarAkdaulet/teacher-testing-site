@@ -74,28 +74,29 @@
 
         // Функция инициализации страницы после подгрузки
         function initializePage() {
-            console.log("initializePage вызвана");
+    console.log("initializePage вызвана");
 
-            // Привязка функции для теста
-            if (document.querySelector('#test-form')) {
-                console.log("Форма теста найдена. Привязываем кнопку Submit.");
-                document.querySelector('button[type="button"]').onclick = calculateScore; // Привязка функции
-            }
+    // Привязка функции для теста
+    if (document.querySelector('#test-form')) {
+        console.log("Форма теста найдена. Привязываем кнопку Submit.");
+        document.querySelector('button[type="button"]').onclick = calculateScore;
+    }
 
-            // Инициализация Google API для логина
-            if (document.querySelector('.g-signin2')) {
-                console.log("g-signin2 элемент найден. Инициализируем Google API.");
-                gapi.load('auth2', function() {
-                    gapi.auth2.init({
-                        client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
-                    }).then(function () {
-                        console.log("Google API повторно инициализирован после загрузки.");
-                    }).catch(function(error) {
-                        console.error("Ошибка инициализации Google Auth2:", error);
-                    });
-                });
-            }
-        }
+    // Инициализация Google API для логина
+    if (document.querySelector('.g-signin2')) {
+        console.log("g-signin2 элемент найден. Инициализируем Google API.");
+        gapi.load('auth2', function() {
+            gapi.auth2.init({
+                client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
+            }).then(function () {
+                console.log("Google API повторно инициализирован после загрузки.");
+            }).catch(function(error) {
+                console.error("Ошибка инициализации Google Auth2:", error);
+            });
+        });
+    }
+}
+
 
         // Функция для расчёта результата теста
         function calculateScore() {
