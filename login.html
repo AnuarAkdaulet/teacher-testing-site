@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <!-- Подключение Google API -->
-    <meta name="google-signin-client_id" content="11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!-- Подключение новой библиотеки Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body, html {
             font-family: Arial, sans-serif;
@@ -14,7 +13,10 @@
         .content {
             padding: 60px 20px;
         }
-        .g-signin2 {
+        #g_id_onload {
+            display: none;
+        }
+        #g_id_signin {
             margin-top: 20px;
         }
     </style>
@@ -22,40 +24,56 @@
 <body>
     <div class="content">
         <h1>Login Page</h1>
-        <!-- Google-кнопка входа -->
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <!-- Новая кнопка для Google Identity Services -->
+        <div id="g_id_onload"
+             data-client_id="11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com"
+             data-context="signin"
+             data-ux_mode="popup"
+             data-login_uri="https://anuarakdaulet.github.io/teacher-testing-site/callback.html"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin" data-type="standard"></div>
         <div id="login-status"></div>
     </div>
 
     <script>
-        // Функция, выполняемая при успешном входе
-        function onSignIn(googleUser) {
-            console.log("onSignIn function called!");
-            var profile = googleUser.getBasicProfile();
+        // Функция, вызываемая после успешного входа
+        function handleCredentialResponse(response) {
+            console.log("Encoded JWT ID token: " + response.credential);
+
+            // Расшифровка токена и отображение данных пользователя
+            const data = jwt_decode(response.credential);
+            console.log("User data:", data);
+
             document.getElementById('login-status').innerHTML = `
-                <p>Welcome, ${profile.getName()}!</p>
-                <p>Your email: ${profile.getEmail()}</p>
+                <p>Welcome, ${data.name}!</p>
+                <p>Your email: ${data.email}</p>
                 <button onclick="signOut()">Sign out</button>
             `;
         }
 
-        // Функция выхода
-        function signOut() {
-            var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signOut().then(function () {
-                document.getElementById('login-status').innerHTML = '<p>You have been signed out.</p>';
-            });
-        }
-
-        // Проверка загрузки Google API
+        // Подключение функции к глобальному окну
         window.onload = function() {
-            console.log("Проверка Google API...");
-            if (typeof gapi !== 'undefined') {
-                console.log("Google API загружен.");
-            } else {
-                console.error("Google API не загружен. Проверьте подключение скрипта.");
-            }
+            google.accounts.id.initialize({
+                client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+                callback: handleCredentialResponse
+            });
+
+            google.accounts.id.renderButton(
+                document.querySelector(".g_id_signin"), // Элемент, где будет кнопка
+                { theme: "outline", size: "large" } // Параметры кнопки
+            );
+
+            google.accounts.id.prompt(); // Показывает диалог входа, если пользователь не авторизован
         };
+
+        // Функция выхода из системы
+        function signOut() {
+            google.accounts.id.disableAutoSelect();
+            document.getElementById('login-status').innerHTML = '<p>You have been signed out.</p>';
+        }
     </script>
+    <!-- Подключение JWT библиотеки для расшифровки токена (требуется) -->
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 </body>
 </html>
