@@ -36,6 +36,8 @@
             margin-top: 50px;
         }
     </style>
+    <!-- Добавляем скрипт Google API и ждём его загрузки -->
+    <script src="https://apis.google.com/js/platform.js" async defer onload="initializeGapi()"></script>
 </head>
 <body>
     <!-- Фиксированное меню навигации -->
@@ -54,13 +56,22 @@
 
     <!-- Скрипт для динамической подгрузки страниц -->
     <script>
+        let gapiInitialized = false; // Флаг, указывающий на готовность gapi
+
+        // Функция для инициализации Google API
+        function initializeGapi() {
+            gapiInitialized = true; // Указываем, что gapi загружен
+            console.log("Google API загружен.");
+            initializePage(); // Повторная инициализация страницы
+        }
+
         // Функция для загрузки контента из внешних файлов
         function loadContent(file) {
             fetch(file)
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById("main-content").innerHTML = data;
-                    initializePage(); // Инициализация скриптов после загрузки
+                    initializePage(); // Инициализация контента после загрузки
                 })
                 .catch(error => console.error('Ошибка загрузки контента:', error));
         }
@@ -72,18 +83,22 @@
 
         // Инициализация после загрузки контента
         function initializePage() {
+            // Проверка наличия формы для теста
             if (document.querySelector('#test-form')) {
-                // Привязка функции для теста
                 document.querySelector('button[type="button"]').onclick = calculateScore;
             }
-            
-            if (document.querySelector('.g-signin2')) {
-                // Инициализация Google API для страницы логина
+
+            // Инициализация Google API для страницы логина, если кнопка присутствует и gapi загружен
+            if (document.querySelector('.g-signin2') && gapiInitialized) {
                 gapi.load('auth2', function() {
                     gapi.auth2.init({
                         client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
+                    }).then(function () {
+                        console.log("Google API для логина инициализирован.");
                     });
                 });
+            } else if (document.querySelector('.g-signin2') && !gapiInitialized) {
+                console.warn("Google API ещё не загружен. Ожидание...");
             }
         }
 
@@ -96,13 +111,8 @@
             if (form.q1.value === "Paris") score++;
             if (form.q2.value === "4") score++;
 
-            // Отображение результатов
             document.getElementById('result').textContent = `Your score is: ${score} out of 2.`;
         }
     </script>
-    
-    <!-- Подключение Google API для логина 
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    -->
 </body>
 </html>
