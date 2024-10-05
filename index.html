@@ -76,9 +76,15 @@
         function initializePage() {
             console.log("initializePage вызвана");
 
+            // Привязка функции для теста
+            if (document.querySelector('#test-form')) {
+                console.log("Форма теста найдена. Привязываем кнопку Submit.");
+                document.querySelector('button[type="button"]').onclick = calculateScore; // Привязка функции
+            }
+
+            // Инициализация Google API для логина
             if (document.querySelector('.g-signin2')) {
                 console.log("g-signin2 элемент найден. Инициализируем Google API.");
-                // Инициализация Google API заново
                 gapi.load('auth2', function() {
                     gapi.auth2.init({
                         client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
@@ -89,6 +95,19 @@
                     });
                 });
             }
+        }
+
+        // Функция для расчёта результата теста
+        function calculateScore() {
+            console.log("calculateScore function called!"); // Проверка вызова функции
+            var score = 0;
+            var form = document.getElementById('test-form');
+
+            // Проверка выбранных ответов
+            if (form.q1.value === "Paris") score++;
+            if (form.q2.value === "4") score++;
+
+            document.getElementById('result').textContent = `Your score is: ${score} out of 2.`;
         }
     </script>
 </body>
