@@ -36,8 +36,6 @@
             margin-top: 50px.
         }
     </style>
-    <!-- Подключение Google Identity Services API
-    <script src="https://accounts.google.com/gsi/client" async defer></script>  -->
 </head>
 <body>
     <!-- Верхнее меню навигации -->
@@ -56,69 +54,36 @@
 
     <!-- Скрипт для динамической подгрузки страниц -->
     <script>
-        // Функция для загрузки контента из внешних файлов
         function loadContent(file) {
-            console.log("Загружаем файл:", file); // Проверка загружаемого файла
+            console.log("Загружаем файл:", file);
             fetch(file)
-                .then(response => {
-                    console.log("Статус ответа:", response.status); // Проверяем статус ответа
-                    if (!response.ok) {
-                        throw new Error(`Ошибка загрузки файла: ${response.status}`);
-                    }
-                    return response.text();
-                })
+                .then(response => response.text())
                 .then(data => {
-                    console.log("Загруженное содержимое файла:", data); // Проверяем, что возвращает `fetch`
                     document.getElementById("main-content").innerHTML = data;
                     console.log("Содержимое вставлено в #main-content.");
-                    console.log("Проверяем содержимое #main-content:", document.getElementById("main-content").innerHTML);
-                    initializePage(file); // Инициализация после загрузки
+                    initializePage(file);
                 })
-                .catch(error => console.error('Ошибка загрузки контента:', error));
+                .catch(error => console.error('Ошибка загрузки:', error));
         }
 
-        // Автоматическая загрузка страницы в зависимости от параметра
         const urlParams = new URLSearchParams(window.location.search);
-        const page = urlParams.get('page') || 'home.html'; // Если параметра `page` нет, загружаем `home.html`
-        console.log("Параметр page:", page);
+        const page = urlParams.get('page') || 'home.html';
         loadContent(page);
 
-        // Функция инициализации страницы после подгрузки
         function initializePage(file) {
-            console.log(`initializePage вызвана для файла: ${file}`);
-
-            // Привязка функции для теста
-            if (document.querySelector('#test-form')) {
-                console.log("Форма теста найдена. Привязываем кнопку Submit.");
-                document.querySelector('button[type="button"]').onclick = calculateScore;
-            }
-
-            // Инициализация Google Identity Services для логина после динамической загрузки
+            console.log(`initializePage вызвана для: ${file}`);
+            
             if (file.includes('login.html')) {
-                console.log("Загрузка login.html: проверяем наличие нового элемента Google Identity Services.");
-
                 setTimeout(function() {
+                    console.log("Проверяем наличие компонента.");
                     const newGoogleButton = document.getElementById('g_id_onload');
                     if (newGoogleButton) {
-                        console.log("Элемент g_id_onload найден. Инициализация не требуется.");
+                        console.log("Элемент g_id_onload найден.");
                     } else {
-                        console.error("Элемент g_id_onload не найден даже после повторной проверки!");
+                        console.error("Элемент g_id_onload не найден даже после проверки!");
                     }
                 }, 1000);
             }
-        }
-
-        // Функция для расчёта результата теста
-        function calculateScore() {
-            console.log("calculateScore function called!"); // Проверка вызова функции
-            var score = 0;
-            var form = document.getElementById('test-form');
-
-            // Проверка выбранных ответов
-            if (form.q1.value === "Paris") score++;
-            if (form.q2.value === "4") score++;
-
-            document.getElementById('result').textContent = `Your score is: ${score} out of 2.`;
         }
     </script>
 </body>
