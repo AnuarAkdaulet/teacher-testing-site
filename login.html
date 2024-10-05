@@ -3,47 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Test Site - Login</title>
+    <title>Login Page</title>
     <!-- Подключение Google API -->
-    <!-- <script src="https://apis.google.com/js/platform.js" async defer></script>-->
     <meta name="google-signin-client_id" content="11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com">
-    <style>
-        .g-signin2 {
-            margin-top: 20px;
-        }
-        .content {
-            padding: 60px 20px;
-        }
-        body, html {
-            font-family: Arial, sans-serif;
-        }
-    </style>
 </head>
 <body>
-    <div class="content">
-        <h1>Login Page</h1>
-        <!-- Контейнер для кнопки входа через Google -->
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
-        <div id="login-status"></div>
-    </div>
+    <h1>Login Page</h1>
+    <!-- Google-кнопка входа -->
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <div id="login-status"></div>
 
-    <!-- Скрипт для обработки Google Sign-In -->
     <script>
+        // Функция, выполняемая при успешном входе
         function onSignIn(googleUser) {
-            // Получение профиля пользователя
+            console.log("onSignIn function called!");
             var profile = googleUser.getBasicProfile();
-            var name = profile.getName();
-            var email = profile.getEmail();
-
-            // Отображение статуса входа
             document.getElementById('login-status').innerHTML = `
-                <p>Welcome, ${name}!</p>
-                <p>Your email: ${email}</p>
+                <p>Welcome, ${profile.getName()}!</p>
+                <p>Your email: ${profile.getEmail()}</p>
                 <button onclick="signOut()">Sign out</button>
             `;
         }
 
-        // Функция для выхода из системы
+        // Функция выхода
         function signOut() {
             var auth2 = gapi.auth2.getAuthInstance();
             auth2.signOut().then(function () {
@@ -51,7 +33,5 @@
             });
         }
     </script>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-
 </body>
 </html>
