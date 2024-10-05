@@ -36,8 +36,8 @@
             margin-top: 50px;
         }
     </style>
-    <!-- Подключение Google API для динамической загрузки -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!-- Подключение новой библиотеки Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <!-- Верхнее меню навигации -->
@@ -74,41 +74,51 @@
 
         // Функция инициализации страницы после подгрузки
         function initializePage() {
-    console.log("initializePage вызвана");
+            console.log("initializePage вызвана");
 
-    // Привязка функции для теста
-    if (document.querySelector('#test-form')) {
-        console.log("Форма теста найдена. Привязываем кнопку Submit.");
-        document.querySelector('button[type="button"]').onclick = calculateScore;
-    }
+            // Привязка функции для теста
+            if (document.querySelector('#test-form')) {
+                console.log("Форма теста найдена. Привязываем кнопку Submit.");
+                document.querySelector('button[type="button"]').onclick = calculateScore; // Привязка функции
+            }
 
-    // Инициализация Google API для логина
-    if (document.querySelector('.g-signin2')) {
-        console.log("g-signin2 элемент найден. Инициализируем Google API.");
-        gapi.load('auth2', function() {
-            gapi.auth2.init({
-                client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
-            }).then(function () {
-                console.log("Google API повторно инициализирован после загрузки.");
-            }).catch(function(error) {
-                console.error("Ошибка инициализации Google Auth2:", error);
-            });
-        });
-    }
-}
+            // Инициализация Google Sign-In для нового API
+            if (document.querySelector('.g-signin2')) {
+                console.log("g-signin2 элемент найден. Инициализируем Google Identity Services.");
+                
+                google.accounts.id.initialize({
+                    client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+                    callback: handleCredentialResponse
+                });
 
+                // Отображение кнопки входа
+                google.accounts.id.renderButton(
+                    document.querySelector('.g-signin2'),
+                    { theme: 'outline', size: 'large' }  // Настройки кнопки
+                );
+                
+                google.accounts.id.prompt(); // Показать запрос на вход
+            }
+        }
 
-        // Функция для расчёта результата теста
-        function calculateScore() {
-            console.log("calculateScore function called!"); // Проверка вызова функции
-            var score = 0;
-            var form = document.getElementById('test-form');
+        // Обработка успешного входа через Google Identity Services
+        function handleCredentialResponse(response) {
+            console.log("handleCredentialResponse вызвана!");
+            const userObject = jwt_decode(response.credential);
+            console.log("User:", userObject);
+            
+            // Обновление статуса входа
+            document.getElementById('login-status').innerHTML = `
+                <p>Welcome, ${userObject.name}!</p>
+                <p>Your email: ${userObject.email}</p>
+                <button onclick="signOut()">Sign out</button>
+            `;
+        }
 
-            // Проверка выбранных ответов
-            if (form.q1.value === "Paris") score++;
-            if (form.q2.value === "4") score++;
-
-            document.getElementById('result').textContent = `Your score is: ${score} out of 2.`;
+        // Функция выхода (временная заглушка)
+        function signOut() {
+            console.log("Пользователь вышел.");
+            document.getElementById('login-status').innerHTML = '<p>You have been signed out.</p>';
         }
     </script>
 </body>
