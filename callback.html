@@ -3,31 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OAuth Callback</title>
+    <title>Google OAuth Callback</title>
+    <script>
+        // Простой скрипт для обработки успешного логина
+        window.onload = function() {
+            console.log("OAuth callback обработан.");
+            document.getElementById('status').textContent = "Вы успешно вошли в систему через Google.";
+        };
+    </script>
 </head>
 <body>
-    <h1>Авторизация прошла успешно!</h1>
-    <p>Пожалуйста, подождите, идёт обработка данных...</p>
-    <script>
-        // Чтение параметров из URL после успешного входа
-        const urlParams = new URLSearchParams(window.location.search);
-
-        // Пример: Получение токена или кода авторизации (если требуется)
-        const authCode = urlParams.get('code');
-        
-        if (authCode) {
-            // Здесь вы можете отправить `authCode` на ваш сервер или использовать его для дальнейших запросов
-            console.log("Authorization Code:", authCode);
-            
-            // Переход на основную страницу или выполнение дальнейшей логики
-            setTimeout(() => {
-                window.location.href = "index.html";  // Перенаправление на главную страницу
-            }, 3000);  // Задержка 3 секунды перед перенаправлением
-        } else {
-            // Если авторизации не было или возникла ошибка
-            console.error("Authorization failed or no code found.");
-            document.body.innerHTML = "<h1>Ошибка авторизации. Пожалуйста, попробуйте снова.</h1>";
-        }
-    </script>
+    <h1>OAuth Callback</h1>
+    <div id="status">Обработка...</div>
 </body>
 </html>
