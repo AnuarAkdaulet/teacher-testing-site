@@ -102,7 +102,7 @@
                     if (signInButton) {
                         console.log("Элемент g-signin2 найден. Инициализируем Google API.");
 
-                        // Инициализируем Google API после загрузки
+                        // Повторная инициализация Google API
                         gapi.load('auth2', function() {
                             gapi.auth2.init({
                                 client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
@@ -113,9 +113,27 @@
                             });
                         });
                     } else {
-                        console.error("Элемент g-signin2 не найден после подгрузки login.html!");
+                        console.log("Повторная проверка через 1 секунду...");
+                        setTimeout(function() {
+                            const signInButtonCheck = document.querySelector('.g-signin2');
+                            if (signInButtonCheck) {
+                                console.log("Элемент g-signin2 найден на второй проверке.");
+                                // Повторная инициализация Google API
+                                gapi.load('auth2', function() {
+                                    gapi.auth2.init({
+                                        client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
+                                    }).then(function () {
+                                        console.log("Google API повторно инициализирован на второй проверке.");
+                                    }).catch(function(error) {
+                                        console.error("Ошибка повторной инициализации Google Auth2:", error);
+                                    });
+                                });
+                            } else {
+                                console.error("Элемент g-signin2 не найден даже после повторной проверки.");
+                            }
+                        }, 1000); // Повторная проверка через 1 секунду
                     }
-                }, 500); // Дождёмся полной загрузки контента
+                }, 1000); // Увеличение задержки до 1 секунды
             }
         }
 
