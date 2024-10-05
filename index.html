@@ -36,6 +36,8 @@
             margin-top: 50px.
         }
     </style>
+    <!-- Подключение нового Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <!-- Верхнее меню навигации -->
@@ -61,7 +63,7 @@
                 .then(data => {
                     document.getElementById("main-content").innerHTML = data;
                     console.log("Содержимое вставлено в #main-content.");
-                    initializePage(file);
+                    initializePage(file); // Запуск инициализации после подгрузки контента
                 })
                 .catch(error => console.error('Ошибка загрузки:', error));
         }
@@ -70,19 +72,55 @@
         const page = urlParams.get('page') || 'home.html';
         loadContent(page);
 
+        // Функция инициализации страницы после подгрузки
         function initializePage(file) {
             console.log(`initializePage вызвана для: ${file}`);
             
             if (file.includes('login.html')) {
+                console.log("login.html загружен. Проверяем Google компонент.");
                 setTimeout(function() {
-                    console.log("Проверяем наличие компонента.");
-                    const newGoogleButton = document.getElementById('g_id_onload');
-                    if (newGoogleButton) {
-                        console.log("Элемент g_id_onload найден.");
-                    } else {
-                        console.error("Элемент g_id_onload не найден даже после проверки!");
-                    }
-                }, 1000);
+                    initializeGoogleAuth(); // Принудительно вызываем инициализацию Google
+                }, 1000); // Задержка для корректной загрузки стилей и элементов
+            }
+        }
+
+        // Принудительная инициализация Google Identity Services после подгрузки
+        function initializeGoogleAuth() {
+            console.log("initializeGoogleAuth: Инициализируем Google компоненты вручную.");
+
+            // Проверяем, есть ли уже загруженный элемент
+            const gsiScript = document.querySelector("script[src='https://accounts.google.com/gsi/client']");
+            if (gsiScript) {
+                console.log("Скрипт Google GSI уже загружен.");
+            } else {
+                console.log("Скрипт Google GSI не загружен. Загружаем вручную.");
+                const script = document.createElement('script');
+                script.src = 'https://accounts.google.com/gsi/client';
+                script.async = true;
+                script.defer = true;
+                script.onload = function() {
+                    console.log("Google API загружен вручную. Инициализация Google Identity.");
+                    renderGoogleButton();
+                };
+                document.head.appendChild(script);
+            }
+
+            // Пробуем создать Google кнопку вручную
+            setTimeout(function() {
+                renderGoogleButton(); // Пробуем повторно отобразить Google кнопку
+            }, 500); // Небольшая задержка для корректной загрузки стилей и элементов
+        }
+
+        // Функция рендеринга кнопки Google вручную
+        function renderGoogleButton() {
+            console.log("Пробуем отрисовать Google кнопку.");
+            const gOnloadElement = document.getElementById('g_id_onload');
+            if (gOnloadElement) {
+                console.log("Элемент g_id_onload найден. Проверяем видимость.");
+                gOnloadElement.style.display = 'block'; // Принудительно делаем видимым
+                console.log("Элемент g_id_onload видим.");
+            } else {
+                console.error("Элемент g_id_onload не найден даже после инициализации!");
             }
         }
     </script>
