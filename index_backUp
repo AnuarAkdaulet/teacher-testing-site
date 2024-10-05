@@ -1,1 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Test Site</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
 
+        .navbar a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            background: #575757;
+            color: white;
+        }
+
+        .content {
+            padding: 60px 20px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Фиксированное меню навигации -->
+    <nav class="navbar">
+        <a href="index.html?page=home.html">Home</a>
+        <a href="index.html?page=test.html">Test</a>
+        <a href="index.html?page=login.html">Login</a>
+        <a href="index.html?page=privacy.html">Privacy Policy</a>
+        <a href="index.html?page=callback.html">Callback</a>
+    </nav>
+
+    <!-- Основной блок контента -->
+    <div class="content">
+        <div id="main-content"></div>
+    </div>
+
+    <!-- Скрипт для динамической подгрузки страниц -->
+    <script>
+        // Функция для загрузки контента из внешних файлов
+        function loadContent(file) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById("main-content").innerHTML = data;
+                    initializePage(); // Инициализация скриптов после загрузки
+                })
+                .catch(error => console.error('Ошибка загрузки контента:', error));
+        }
+
+        // Автоматическая загрузка страницы в зависимости от параметра
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = urlParams.get('page') || 'home.html'; // Если параметра `page` нет, загружаем `home.html`
+        loadContent(page);
+
+        // Инициализация после загрузки контента
+        function initializePage() {
+            if (document.querySelector('#test-form')) {
+                // Привязка функции для теста
+                document.querySelector('button[type="button"]').onclick = calculateScore;
+            }
+            
+            if (document.querySelector('.g-signin2')) {
+                // Инициализация Google API для страницы логина
+                gapi.load('auth2', function() {
+                    gapi.auth2.init({
+                        client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
+                    });
+                });
+            }
+        }
+
+        // Функция для теста
+        function calculateScore() {
+            var score = 0;
+            var form = document.getElementById('test-form');
+
+            // Проверка выбранных ответов
+            if (form.q1.value === "Paris") score++;
+            if (form.q2.value === "4") score++;
+
+            // Отображение результатов
+            document.getElementById('result').textContent = `Your score is: ${score} out of 2.`;
+        }
+    </script>
+    
+    <!-- Подключение Google API для логина 
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    -->
+</body>
+</html>
