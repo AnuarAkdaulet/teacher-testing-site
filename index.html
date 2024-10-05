@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Test Site - Home</title>
+    <title>Teacher Test Site</title>
     <style>
         body, html {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
         }
-        /* Фиксированное меню */
         .navbar {
-            background-color: #333; /* Чёрный фон */
+            background-color: #333;
             color: #fff;
             padding: 10px 0;
             text-align: center;
@@ -27,15 +26,13 @@
             color: white;
             text-decoration: none;
         }
-
         .navbar a:hover {
-            background: #575757; /* Серый фон при наведении */
+            background: #575757;
             color: white;
         }
 
-        /* Основной контент страницы */
         .content {
-            padding: 60px 20px; /* Отступ для основного содержимого */
+            padding: 60px 20px;
             margin-top: 50px;
         }
     </style>
@@ -43,18 +40,34 @@
 <body>
     <!-- Фиксированное меню навигации -->
     <nav class="navbar">
-        <a href="index.html">Home</a>
-        <a href="home.html">Dashboard</a>
-        <a href="test.html">Test</a>
-        <a href="login.html">Login</a>
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="callback.html">Callback</a>
+        <a href="index.html?page=home.html">Home</a>
+        <a href="index.html?page=test.html">Test</a>
+        <a href="index.html?page=login.html">Login</a>
+        <a href="index.html?page=privacy.html">Privacy Policy</a>
+        <a href="index.html?page=callback.html">Callback</a>
     </nav>
 
-    <!-- Основной контент -->
+    <!-- Основной блок контента -->
     <div class="content">
-        <h1>Welcome to the Teacher Test Site!</h1>
-        <p>This is the main page where you can navigate to other sections.</p>
+        <div id="main-content"></div>
     </div>
+
+    <!-- Скрипт для динамической подгрузки страниц -->
+    <script>
+        // Функция для загрузки контента из внешних файлов
+        function loadContent(file) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById("main-content").innerHTML = data;
+                })
+                .catch(error => console.error('Ошибка загрузки контента:', error));
+        }
+
+        // Определяем страницу, которую нужно загрузить по умолчанию (если не указан параметр)
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = urlParams.get('page') || 'home.html'; // Если параметра `page` нет, загружаем `home.html`
+        loadContent(page);
+    </script>
 </body>
 </html>
