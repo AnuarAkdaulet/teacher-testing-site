@@ -5,6 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Test Site - Test</title>
     <style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+    /* Фиксированное меню */
+    .navbar {
+        background-color: #333; /* Чёрный фон */
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .navbar a {
+        margin: 0 15px;
+        color: white;
+        text-decoration: none;
+    }
+
+    .navbar a:hover {
+        background: #575757; /* Серый фон при наведении */
+        color: white;
+    }
+    
+    /* Основной контент страницы */
+    .content {
+        padding: 60px 20px; /* Отступ для основного содержимого */
+    }
+</style>
+
+    <style>
         body, html {
             margin: 0;
             padding: 0;
