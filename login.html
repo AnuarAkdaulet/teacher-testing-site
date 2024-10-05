@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <!-- Подключение Google API -->
-    <meta name="google-signin-client_id" content="11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body, html {
             font-family: Arial, sans-serif;
@@ -14,39 +12,13 @@
         .content {
             padding: 60px 20px;
         }
-        .g-signin2 {
-            margin-top: 20px;
-        }
     </style>
 </head>
 <body>
     <div class="content">
         <h1>Login Page</h1>
-        <!-- Google-кнопка входа -->
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <div class="g-signin2"></div>
         <div id="login-status"></div>
     </div>
-
-    <script>
-        // Функция, выполняемая при успешном входе
-        function onSignIn(googleUser) {
-            console.log("onSignIn function called!");
-            var profile = googleUser.getBasicProfile();
-            document.getElementById('login-status').innerHTML = `
-                <p>Welcome, ${profile.getName()}!</p>
-                <p>Your email: ${profile.getEmail()}</p>
-                <button onclick="signOut()">Sign out</button>
-            `;
-        }
-
-        // Функция выхода
-        function signOut() {
-            var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signOut().then(function () {
-                document.getElementById('login-status').innerHTML = '<p>You have been signed out.</p>';
-            });
-        }
-    </script>
 </body>
 </html>
-
