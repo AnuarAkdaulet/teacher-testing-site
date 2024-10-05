@@ -3,32 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <!-- Подключение нового Google Identity Services -->
+    <title>Login</title>
+    <!-- Подключение Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        #g_id_onload, .g_id_signin {
-            margin-top: 20px;
-        }
-    </style>
 </head>
 <body>
     <h1>Добро пожаловать! Войдите через Google</h1>
     
-    <!-- Google Identity Services компонент -->
+    <!-- Настройка нового компонента Google Identity Services -->
     <div id="g_id_onload"
          data-client_id="11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com"
          data-callback="handleCredentialResponse"
          data-auto_prompt="false"
-         data-login_uri="https://anuarakdaulet.github.io/teacher-testing-site/login.html">
+         data-login_uri="https://anuarakdaulet.github.io/teacher-testing-site/callback.html">
     </div>
 
-    <!-- Ручная кнопка для входа Google Sign-In -->
-    <div class="g_id_signin"
+    <!-- Стандартная кнопка Google Sign-In -->
+    <div class="g_id_signin" 
          data-type="standard"
          data-shape="rectangular"
          data-theme="outline"
@@ -40,21 +31,19 @@
     <!-- Поле для отображения статуса -->
     <div id="status">Ожидание загрузки Google API...</div>
 
-    <button id="signOutBtn" onclick="signOut()" style="display: none;">Выйти</button>
+    <button id="signOutBtn" onclick="signOut()">Выйти</button>
 
     <script>
-        // Обработчик успешного входа в Google
+        // Функция обратного вызова после успешного входа в систему
         function handleCredentialResponse(response) {
-            console.log("Успешный вход: ID Token: " + response.credential);
-            document.getElementById('status').textContent = 'Добро пожаловать, пользователь! Ваш вход выполнен.';
-            document.getElementById('signOutBtn').style.display = 'block';
+            console.log("ID Token: " + response.credential);
+            document.getElementById('status').textContent = 'Добро пожаловать! Вход выполнен.';
         }
 
-        // Обработчик выхода из системы
+        // Функция для выхода из системы
         function signOut() {
-            console.log("Пользователь вышел из системы.");
+            console.log("Пользователь вышел.");
             document.getElementById('status').textContent = 'Вы вышли из системы.';
-            document.getElementById('signOutBtn').style.display = 'none';
         }
     </script>
 </body>
