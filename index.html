@@ -68,9 +68,10 @@
                     return response.text();
                 })
                 .then(data => {
-                    console.log("Загруженное содержимое:", data); // Проверяем, что возвращает `fetch`
+                    console.log("Загруженное содержимое файла:", data); // Проверяем, что возвращает `fetch`
                     document.getElementById("main-content").innerHTML = data;
                     console.log("Содержимое вставлено в #main-content");
+                    console.log("Проверяем содержимое #main-content:", document.getElementById("main-content").innerHTML);
                     initializePage(file); // Инициализация после загрузки
                 })
                 .catch(error => console.error('Ошибка загрузки контента:', error));
@@ -99,6 +100,7 @@
                 // Убедимся, что элемент g-signin2 присутствует на странице
                 setTimeout(function() {
                     const signInButton = document.querySelector('.g-signin2');
+                    console.log("Содержимое main-content после подгрузки login.html:", document.getElementById("main-content").innerHTML);
                     if (signInButton) {
                         console.log("Элемент g-signin2 найден. Пытаемся инициализировать Google API.");
 
