@@ -58,12 +58,20 @@
     <script>
         // Функция для загрузки контента из внешних файлов
         function loadContent(file) {
+            console.log("Загружаем файл:", file); // Проверка загружаемого файла
             fetch(file)
-                .then(response => response.text())
+                .then(response => {
+                    console.log("Статус ответа:", response.status); // Проверяем статус ответа
+                    if (!response.ok) {
+                        throw new Error(`Ошибка загрузки файла: ${response.status}`);
+                    }
+                    return response.text();
+                })
                 .then(data => {
+                    console.log("Загруженное содержимое:", data); // Проверяем, что возвращает `fetch`
                     document.getElementById("main-content").innerHTML = data;
-                    console.log(`Контент загружен: ${file}`);
-                    initializePage(file); // Инициализация скриптов после загрузки
+                    console.log("Содержимое вставлено в #main-content");
+                    initializePage(file); // Инициализация после загрузки
                 })
                 .catch(error => console.error('Ошибка загрузки контента:', error));
         }
@@ -84,20 +92,30 @@
                 document.querySelector('button[type="button"]').onclick = calculateScore;
             }
 
-            // Инициализация Google API для логина
-            if (file.includes('login.html') && document.querySelector('.g-signin2')) {
-                console.log("g-signin2 элемент найден. Инициализируем Google API.");
-                gapi.load('auth2', function() {
-                    gapi.auth2.init({
-                        client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
-                    }).then(function () {
-                        console.log("Google API повторно инициализирован после загрузки login.html.");
-                    }).catch(function(error) {
-                        console.error("Ошибка инициализации Google Auth2:", error);
-                    });
-                });
-            } else if (file.includes('login.html')) {
-                console.error("Элемент g-signin2 не найден после подгрузки login.html!");
+            // Инициализация Google API для логина после динамической загрузки
+            if (file.includes('login.html')) {
+                console.log("Загрузка login.html: проверяем наличие g-signin2.");
+
+                // Убедимся, что элемент g-signin2 присутствует на странице
+                setTimeout(function() {
+                    const signInButton = document.querySelector('.g-signin2');
+                    if (signInButton) {
+                        console.log("Элемент g-signin2 найден. Инициализируем Google API.");
+
+                        // Инициализируем Google API после загрузки
+                        gapi.load('auth2', function() {
+                            gapi.auth2.init({
+                                client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
+                            }).then(function () {
+                                console.log("Google API повторно инициализирован после загрузки login.html.");
+                            }).catch(function(error) {
+                                console.error("Ошибка инициализации Google Auth2:", error);
+                            });
+                        });
+                    } else {
+                        console.error("Элемент g-signin2 не найден после подгрузки login.html!");
+                    }
+                }, 500); // Дождёмся полной загрузки контента
             }
         }
 
