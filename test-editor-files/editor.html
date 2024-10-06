@@ -4,9 +4,35 @@
   <title>Редактор тестов</title>
 </head>
 <body>
-  
+  <!-- Основная структура HTML -->
+  <h2 id="editor-header">Редактор тестов</h2>
+  <button id="add-button">AddQuestions</button>
+  <button id="save-button">SaveQuestions</button>
+
+  <!-- Форма добавления вопросов -->
+  <div id="question-form" style="display: none;">
+    <h3>Добавить новый вопрос</h3>
+    <label for="question-text">Вопрос:</label>
+    <input type="text" id="question-text"><br><br>
+    <label for="answer1">Ответ 1:</label>
+    <input type="text" id="answer1"><br>
+    <label for="answer2">Ответ 2:</label>
+    <input type="text" id="answer2"><br>
+    <label for="answer3">Ответ 3:</label>
+    <input type="text" id="answer3"><br>
+    <label for="answer4">Ответ 4:</label>
+    <input type="text" id="answer4"><br><br>
+    <button onclick="saveQuestion()">Сохранить вопрос</button>
+  </div>
+
+  <!-- Помещаем скрипт в конец страницы -->
   <script>
-    // Добавляем все JavaScript-функции в этом файле
+    document.addEventListener("DOMContentLoaded", function () {
+      // Обработчики событий
+      document.getElementById('add-button').addEventListener('click', showQuestionForm);
+      document.getElementById('save-button').addEventListener('click', saveAllQuestions);
+    });
+
     function showQuestionForm() {
       document.getElementById('question-form').style.display = 'block';
     }
@@ -42,26 +68,5 @@
       downloadLink.click();
     }
   </script>
-  <h2>Редактор тестов</h2>
-  <button onclick="showQuestionForm()">AddQuestions</button>
-  <button onclick="saveAllQuestions()">SaveQuestions</button>
-
-  <div id="question-form" style="display: none;">
-    <h3>Добавить новый вопрос</h3>
-    <label>Вопрос:</label>
-    <input type="text" id="question-text"><br><br>
-
-    <label>Ответ 1:</label>
-    <input type="text" id="answer1"><br>
-    <label>Ответ 2:</label>
-    <input type="text" id="answer2"><br>
-    <label>Ответ 3:</label>
-    <input type="text" id="answer3"><br>
-    <label>Ответ 4:</label>
-    <input type="text" id="answer4"><br><br>
-
-    <button onclick="saveQuestion()">Сохранить вопрос</button>
-  </div>
-
 </body>
 </html>
