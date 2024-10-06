@@ -4,27 +4,7 @@
   <title>Редактор тестов</title>
 </head>
 <body>
-  <h2>Редактор тестов</h2>
-  <button onclick="showQuestionForm()">AddQuestions</button>
-  <button onclick="saveAllQuestions()">SaveQuestions</button>
-
-  <div id="question-form" style="display: none;">
-    <h3>Добавить новый вопрос</h3>
-    <label>Вопрос:</label>
-    <input type="text" id="question-text"><br><br>
-
-    <label>Ответ 1:</label>
-    <input type="text" id="answer1"><br>
-    <label>Ответ 2:</label>
-    <input type="text" id="answer2"><br>
-    <label>Ответ 3:</label>
-    <input type="text" id="answer3"><br>
-    <label>Ответ 4:</label>
-    <input type="text" id="answer4"><br><br>
-
-    <button onclick="saveQuestion()">Сохранить вопрос</button>
-  </div>
-
+  
   <script>
     // Добавляем все JavaScript-функции в этом файле
     function showQuestionForm() {
@@ -62,5 +42,26 @@
       downloadLink.click();
     }
   </script>
+  <h2>Редактор тестов</h2>
+  <button onclick="showQuestionForm()">AddQuestions</button>
+  <button onclick="saveAllQuestions()">SaveQuestions</button>
+
+  <div id="question-form" style="display: none;">
+    <h3>Добавить новый вопрос</h3>
+    <label>Вопрос:</label>
+    <input type="text" id="question-text"><br><br>
+
+    <label>Ответ 1:</label>
+    <input type="text" id="answer1"><br>
+    <label>Ответ 2:</label>
+    <input type="text" id="answer2"><br>
+    <label>Ответ 3:</label>
+    <input type="text" id="answer3"><br>
+    <label>Ответ 4:</label>
+    <input type="text" id="answer4"><br><br>
+
+    <button onclick="saveQuestion()">Сохранить вопрос</button>
+  </div>
+
 </body>
 </html>
