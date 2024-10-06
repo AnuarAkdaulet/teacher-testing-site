@@ -1,97 +1,66 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Editor</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-        }
-        h2 {
-            text-align: center;
-        }
-        .question {
-            margin-bottom: 20px;
-        }
-        .question input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 5px;
-        }
-        .answers {
-            margin-left: 20px;
-        }
-        .answers input {
-            margin-right: 10px;
-        }
-        .add-question-btn, .save-quiz-btn {
-            padding: 10px 15px;
-            margin: 10px 0;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+  <title>Редактор тестов</title>
 </head>
 <body>
-    <div class="container">
-        <h2>Test Editor</h2>
-        <div id="quiz-editor">
-            <!-- Контейнер для вопросов -->
-        </div>
-        <button class="add-question-btn" onclick="addQuestion()">Add Question</button>
-        <button class="save-quiz-btn" onclick="saveQuiz()">Save Quiz</button>
-        <p id="output"></p>
-    </div>
+  <h2>Редактор тестов</h2>
+  <button onclick="showQuestionForm()">AddQuestions</button>
+  <button onclick="saveAllQuestions()">SaveQuestions</button>
 
-    <script>
-        let questionCount = 0;
+  <div id="question-form" style="display: none;">
+    <h3>Добавить новый вопрос</h3>
+    <label>Вопрос:</label>
+    <input type="text" id="question-text"><br><br>
 
-        // Функция для добавления нового вопроса
-        function addQuestion() {
-            const editor = document.getElementById('quiz-editor');
-            const questionDiv = document.createElement('div');
-            questionDiv.className = 'question';
-            questionDiv.innerHTML = `
-                <h4>Question ${questionCount + 1}</h4>
-                <input type="text" placeholder="Enter your question here" id="question-${questionCount}">
-                <div class="answers">
-                    <input type="text" placeholder="Answer 1" id="answer-${questionCount}-1"><br>
-                    <input type="text" placeholder="Answer 2" id="answer-${questionCount}-2"><br>
-                    <input type="text" placeholder="Answer 3" id="answer-${questionCount}-3"><br>
-                    <input type="text" placeholder="Answer 4" id="answer-${questionCount}-4"><br>
-                </div>
-            `;
-            editor.appendChild(questionDiv);
-            questionCount++;
-        }
+    <label>Ответ 1:</label>
+    <input type="text" id="answer1"><br>
+    <label>Ответ 2:</label>
+    <input type="text" id="answer2"><br>
+    <label>Ответ 3:</label>
+    <input type="text" id="answer3"><br>
+    <label>Ответ 4:</label>
+    <input type="text" id="answer4"><br><br>
 
-        // Функция для сохранения теста в формате JSON
-        function saveQuiz() {
-            let quizData = { questions: [] };
-            for (let i = 0; i < questionCount; i++) {
-                let questionText = document.getElementById(`question-${i}`).value;
-                let answers = [];
-                for (let j = 1; j <= 4; j++) {
-                    let answerText = document.getElementById(`answer-${i}-${j}`).value;
-                    answers.push(answerText);
-                }
-                quizData.questions.push({ question: questionText, answers: answers });
-            }
-            document.getElementById('output').textContent = JSON.stringify(quizData, null, 2);
-        }
-    </script>
+    <button onclick="saveQuestion()">Сохранить вопрос</button>
+  </div>
+
+  <script>
+    // Добавляем все JavaScript-функции в этом файле
+    function showQuestionForm() {
+      document.getElementById('question-form').style.display = 'block';
+    }
+
+    let questions = [];  // Массив для хранения вопросов
+
+    function saveQuestion() {
+      let questionText = document.getElementById('question-text').value;
+      let answer1 = document.getElementById('answer1').value;
+      let answer2 = document.getElementById('answer2').value;
+      let answer3 = document.getElementById('answer3').value;
+      let answer4 = document.getElementById('answer4').value;
+
+      let questionObj = {
+        question: questionText,
+        answers: [answer1, answer2, answer3, answer4]
+      };
+
+      questions.push(questionObj);
+      document.getElementById('question-text').value = '';
+      document.getElementById('answer1').value = '';
+      document.getElementById('answer2').value = '';
+      document.getElementById('answer3').value = '';
+      document.getElementById('answer4').value = '';
+      alert('Вопрос успешно добавлен!');
+    }
+
+    function saveAllQuestions() {
+      let dataStr = JSON.stringify(questions, null, 2);
+      let downloadLink = document.createElement('a');
+      downloadLink.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(dataStr);
+      downloadLink.download = 'questions.json';
+      downloadLink.click();
+    }
+  </script>
 </body>
 </html>
