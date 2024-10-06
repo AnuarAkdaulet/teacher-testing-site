@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Editor</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            text-align: center;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .question input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+        .answers {
+            margin-left: 20px;
+        }
+        .answers input {
+            margin-right: 10px;
+        }
+        .add-question-btn, .save-quiz-btn {
+            padding: 10px 15px;
+            margin: 10px 0;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Test Editor</h2>
+        <div id="quiz-editor">
+            <!-- Контейнер для вопросов -->
+        </div>
+        <button class="add-question-btn" onclick="addQuestion()">Add Question</button>
+        <button class="save-quiz-btn" onclick="saveQuiz()">Save Quiz</button>
+        <p id="output"></p>
+    </div>
+
+    <script>
+        let questionCount = 0;
+
+        // Функция для добавления нового вопроса
+        function addQuestion() {
+            const editor = document.getElementById('quiz-editor');
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            questionDiv.innerHTML = `
+                <h4>Question ${questionCount + 1}</h4>
+                <input type="text" placeholder="Enter your question here" id="question-${questionCount}">
+                <div class="answers">
+                    <input type="text" placeholder="Answer 1" id="answer-${questionCount}-1"><br>
+                    <input type="text" placeholder="Answer 2" id="answer-${questionCount}-2"><br>
+                    <input type="text" placeholder="Answer 3" id="answer-${questionCount}-3"><br>
+                    <input type="text" placeholder="Answer 4" id="answer-${questionCount}-4"><br>
+                </div>
+            `;
+            editor.appendChild(questionDiv);
+            questionCount++;
+        }
+
+        // Функция для сохранения теста в формате JSON
+        function saveQuiz() {
+            let quizData = { questions: [] };
+            for (let i = 0; i < questionCount; i++) {
+                let questionText = document.getElementById(`question-${i}`).value;
+                let answers = [];
+                for (let j = 1; j <= 4; j++) {
+                    let answerText = document.getElementById(`answer-${i}-${j}`).value;
+                    answers.push(answerText);
+                }
+                quizData.questions.push({ question: questionText, answers: answers });
+            }
+            document.getElementById('output').textContent = JSON.stringify(quizData, null, 2);
+        }
+    </script>
+</body>
+</html>
