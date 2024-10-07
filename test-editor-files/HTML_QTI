@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Создание и редактирование HTML-тестов</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+  <h2>Создание и редактирование HTML-тестов</h2>
+
+  <!-- Кнопки для выбора функционала -->
+  <button onclick="startNewTest()">Создать новый тест</button>
+  <input type="file" id="fileInput" accept=".html">
+  <button onclick="loadHTML()">Загрузить существующий HTML-тест</button>
+
+  <!-- Поля для ввода и редактирования вопросов и ответов -->
+  <div id="questions"></div>
+
+  <!-- Кнопки для сохранения -->
+  <button onclick="generateQTI()">Сохранить в QTI</button>
+  <button onclick="saveAsHTML()">Сохранить как HTML</button>
+  <button onclick="transferToStudent()">Перейти к странице теста для студентов</button>
+
+  <!-- Скрытое поле для передачи данных на страницу студента -->
+  <textarea id="hiddenTestData" style="display:none"></textarea>
+
+  <script>
+    let questions = [];
+
+    // Функция для начала нового теста с нуля
+    function startNewTest() {
+      questions = [];  // Очистить список вопросов
+      document.getElementById('questions').innerHTML = '';  // Очистить форму
+      addQuestion();  // Добавить первый вопрос
+    }
+
+    // Функция для добавления нового вопроса в тест
+    function addQuestion() {
+      let questionIndex = questions.length + 1;
+      document.getElementById('questions').insertAdjacentHTML('beforeend', `
+        <div class="question">
+          <label>Вопрос ${questionIndex}:</label>
+          <input type="text" class="question-text" placeholder="Введите текст вопроса"><br>
+          <label>Ответ A:</label>
+          <input type="text" class="answer" placeholder="Ответ A"><br>
+          <label>Ответ B:</label>
+          <input type="text" class="answer" placeholder="Ответ B"><br><br>
+        </div>
+      `);
+      questions.push({ questionText: '', answers: ['', ''] });  // Добавить пустой вопрос в массив
+    }
+
+    // Функция для загрузки HTML-файла и автоматического заполнения формы
+    function loadHTML() {
+      let file = document.getElementById('fileInput').files[0];
+      if (!file) {
+        alert("Пожалуйста, выберите файл HTML.");
+        return;
+      }
+
+      let reader = new FileReader();
+      reader.onload = function(event) {
+        let htmlContent = event.target.result;
+        parseHTML(htmlContent);
+      };
+      reader.readAsText(file);
+    }
+
+    // Парсинг HTML-файла и автоматическое заполнение формы
+    function parseHTML(htmlContent) {
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(htmlContent, 'text/html');
+      let questionElements = doc.querySelectorAll('p.question'); // Ищем вопросы в HTML
+      let answerElements = doc.querySelectorAll('p.answer'); // Ищем ответы в HTML
+      questions = [];  // Очистить предыдущие вопросы
+
+      document.getElementById('questions').innerHTML = '';  // Очистить форму на странице
+
+      // Заполнение формы новыми данными
+      questionElements.forEach((element, index) => {
+        let questionText = element.textContent.trim();
+        let answerA = answerElements[index * 2].textContent.trim();  // Первый ответ
+        let answerB = answerElements[index * 2 + 1].textContent.trim();  // Второй ответ
+
+        questions.push({ questionText: questionText, answers: [answerA, answerB] });
+
+        // Добавить вопрос и ответы в интерфейс
+        document.getElementById('questions').insertAdjacentHTML('beforeend', `
+          <div class="question">
+            <label>Вопрос ${index + 1}:</label>
+            <input type="text" class="question-text" value="${questionText}"><br>
+            <label>Ответ A:</label>
+            <input type="text" class="answer" value="${answerA}"><br>
+            <label>Ответ B:</label>
+            <input type="text" class="answer" value="${answerB}"><br><br>
+          </div>
+        `);
+      });
+    }
+
+    // Функция для сохранения теста как HTML-файл
+    function saveAsHTML() {
+      let htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Редактированный тест</title>
+      </head>
+      <body>
+        <h2>Редактированный тест</h2>
+      `;
+
+      let questionDivs = document.querySelectorAll('.question');
+      questionDivs.forEach((div, index) => {
+        let questionText = div.querySelector('.question-text').value;
+        let answers = div.querySelectorAll('.answer');
+        htmlContent += `<p class="question">Вопрос ${index + 1}: ${questionText}</p>`;
+        answers.forEach((answer, i) => {
+          htmlContent += `<p class="answer">Ответ ${String.fromCharCode(65 + i)}: ${answer.value}</p>`;
+        });
+      });
+
+      htmlContent += `
+      </body>
+      </html>
+      `;
+
+      let blob = new Blob([htmlContent], {type: "text/html"});
+      saveAs(blob, "edited-test.html");
+    }
+
+    // Функция для генерации QTI-файла
+    function generateQTI() {
+      let zip = new JSZip();
+      let qtiContent = `
+        <?xml version="1.0" encoding="UTF-8"?>
+        <questestinterop xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2">
+          <assessment ident="test_id" title="Редактированный тест">
+            <section ident="root_section">
+      `;
+
+      questions.forEach((question, index) => {
+        let questionText = question.questionText;
+        let answers = question.answers;
+        qtiContent += `
+          <item ident="item${index + 1}" title="Вопрос ${index + 1}">
+            <presentation>
+              <material>
+                <mattext texttype="text/plain">${questionText}</mattext>
+              </material>
+              <response_lid ident="response${index + 1}">
+                <render_choice>
+                  ${answers.map((answer, i) => `
+                    <response_label ident="${String.fromCharCode(65 + i)}">
+                      <material>
+                        <mattext texttype="text/plain">${answer}</mattext>
+                      </material>
+                    </response_label>`).join('')}
+                </render_choice>
+              </response_lid>
+            </presentation>
+          </item>`;
+      });
+
+      qtiContent += `
+            </section>
+          </assessment>
+        </questestinterop>`;
+
+      zip.file("test.xml", qtiContent);
+      zip.generateAsync({type:"blob"}).then(function(content) {
+        saveAs(content, "test.qti.zip");
+      });
+    }
+
+    // Передача теста на страницу для студентов
+    function transferToStudent() {
+      let htmlContent = document.getElementById('questions').innerHTML;
+      document.getElementById('hiddenTestData').value = htmlContent;
+      // Можно отправить это значение на другую страницу или сохранить в LocalStorage
+      alert("Данные переданы на страницу студента!");
+    }
+  </script>
+</body>
+</html>
