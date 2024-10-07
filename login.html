@@ -1,50 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <!-- Подключение Google Identity Services -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <title>Вход / Регистрация</title>
 </head>
 <body>
-    <h1>Добро пожаловать! Войдите через Google</h1>
-    
-    <!-- Настройка нового компонента Google Identity Services -->
-    <div id="g_id_onload"
-         data-client_id="11087384827-9e1692tg7odjen8os8f0rvivgnd5snik.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse"
-         data-auto_prompt="false"
-         data-login_uri="https://anuarakdaulet.github.io/teacher-testing-site/callback.html">
-    </div>
-
-    <!-- Стандартная кнопка Google Sign-In -->
-    <div class="g_id_signin" 
-         data-type="standard"
-         data-shape="rectangular"
-         data-theme="outline"
-         data-text="sign_in_with"
-         data-size="large"
-         data-logo_alignment="left">
-    </div>
-
-    <!-- Поле для отображения статуса -->
-    <div id="status">Ожидание загрузки Google API...</div>
-
-    <button id="signOutBtn" onclick="signOut()">Выйти</button>
+  <header>
+    <h1>Вход или регистрация</h1>
+    <nav>
+      <a href="index.html">Главная</a> |
+      <a href="test.html">Пройти тест</a> |
+      <a href="test-editor-files/test.html">Создать тест</a> |
+      <a href="login.html">Вход / Регистрация</a>
+    </nav>
+  </header>
+  <main>
+    <h2>Войти на сайт</h2>
+    <form>
+      <label>Имя пользователя:</label>
+      <input type="text" id="username"><br>
+      <label>Пароль:</label>
+      <input type="password" id="password"><br>
+      <button type="button" onclick="login()">Войти</button>
+    </form>
+    <p id="login-result"></p>
 
     <script>
-        // Функция обратного вызова после успешного входа в систему
-        function handleCredentialResponse(response) {
-            console.log("ID Token: " + response.credential);
-            document.getElementById('status').textContent = 'Добро пожаловать! Вход выполнен.';
+      function login() {
+        let user = document.getElementById('username').value;
+        let pass = document.getElementById('password').value;
+        if (user === "admin" && pass === "1234") {
+          document.getElementById('login-result').innerText = "Успешный вход!";
+        } else {
+          document.getElementById('login-result').innerText = "Неверное имя пользователя или пароль.";
         }
-
-        // Функция для выхода из системы
-        function signOut() {
-            console.log("Пользователь вышел.");
-            document.getElementById('status').textContent = 'Вы вышли из системы.';
-        }
+      }
     </script>
+  </main>
+  <footer>
+    <p>Мой сайт © 2024</p>
+  </footer>
 </body>
 </html>
