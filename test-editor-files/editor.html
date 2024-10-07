@@ -1,71 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Редактор тестов</title>
+  <title>Редактор вопросов</title>
 </head>
 <body>
-  <!-- Основная структура HTML -->
-  <h2 id="editor-header">Редактор тестов</h2>
-  <button id="add-button">AddQuestions</button>
-  <button id="save-button">SaveQuestions</button>
+  <header>
+    <h1>Редактор вопросов</h1>
+    <!-- Навигационное меню -->
+    <nav>
+      <a href="index.html">Главная</a> |
+      <a href="test.html">Пройти тест</a> |
+      <a href="test-editor-files/editor.html">Редактор вопросов</a> |
+      <a href="login.html">Вход / Регистрация</a>
+    </nav>
+  </header>
 
-  <!-- Форма добавления вопросов -->
-  <div id="question-form" style="display: none;">
-    <h3>Добавить новый вопрос</h3>
-    <label for="question-text">Вопрос:</label>
-    <input type="text" id="question-text"><br><br>
-    <label for="answer1">Ответ 1:</label>
-    <input type="text" id="answer1"><br>
-    <label for="answer2">Ответ 2:</label>
-    <input type="text" id="answer2"><br>
-    <label for="answer3">Ответ 3:</label>
-    <input type="text" id="answer3"><br>
-    <label for="answer4">Ответ 4:</label>
-    <input type="text" id="answer4"><br><br>
-    <button onclick="saveQuestion()">Сохранить вопрос</button>
-  </div>
+  <main>
+    <h2>Создавайте и редактируйте вопросы для тестов</h2>
+    <form id="question-form">
+      <label for="question">Вопрос:</label><br>
+      <textarea id="question" rows="3" cols="50"></textarea><br><br>
 
-  <!-- Помещаем скрипт в конец страницы -->
+      <label for="answer1">Ответ 1:</label>
+      <input type="text" id="answer1"><br><br>
+
+      <label for="answer2">Ответ 2:</label>
+      <input type="text" id="answer2"><br><br>
+
+      <label for="answer3">Ответ 3:</label>
+      <input type="text" id="answer3"><br><br>
+
+      <button type="button" onclick="saveQuestion()">Сохранить вопрос</button>
+      <p id="saved-message"></p>
+    </form>
+  </main>
+
+  <footer>
+    <p>Мой сайт © 2024</p>
+  </footer>
+
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Обработчики событий
-      document.getElementById('add-button').addEventListener('click', showQuestionForm);
-      document.getElementById('save-button').addEventListener('click', saveAllQuestions);
-    });
-
-    function showQuestionForm() {
-      document.getElementById('question-form').style.display = 'block';
-    }
-
-    let questions = [];  // Массив для хранения вопросов
-
     function saveQuestion() {
-      let questionText = document.getElementById('question-text').value;
-      let answer1 = document.getElementById('answer1').value;
-      let answer2 = document.getElementById('answer2').value;
-      let answer3 = document.getElementById('answer3').value;
-      let answer4 = document.getElementById('answer4').value;
+      const question = document.getElementById('question').value;
+      const answer1 = document.getElementById('answer1').value;
+      const answer2 = document.getElementById('answer2').value;
+      const answer3 = document.getElementById('answer3').value;
 
-      let questionObj = {
-        question: questionText,
-        answers: [answer1, answer2, answer3, answer4]
-      };
+      if (!question || !answer1 || !answer2 || !answer3) {
+        document.getElementById('saved-message').innerText = "Пожалуйста, заполните все поля.";
+        return;
+      }
 
-      questions.push(questionObj);
-      document.getElementById('question-text').value = '';
-      document.getElementById('answer1').value = '';
-      document.getElementById('answer2').value = '';
-      document.getElementById('answer3').value = '';
-      document.getElementById('answer4').value = '';
-      alert('Вопрос успешно добавлен!');
-    }
-
-    function saveAllQuestions() {
-      let dataStr = JSON.stringify(questions, null, 2);
-      let downloadLink = document.createElement('a');
-      downloadLink.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(dataStr);
-      downloadLink.download = 'questions.json';
-      downloadLink.click();
+      // Отображение сообщения об успешном сохранении
+      document.getElementById('saved-message').innerText = "Вопрос успешно сохранён!";
+      
+      // Сброс формы после сохранения
+      document.getElementById('question-form').reset();
     }
   </script>
 </body>
