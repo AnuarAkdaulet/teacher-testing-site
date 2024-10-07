@@ -1,20 +1,51 @@
-<h1>Take a Test</h1>
-<form id="test-form">
-    <div>
-        <h2>Question 1: What is the capital of France?</h2>
-        <input type="radio" name="q1" value="Paris"> Paris<br>
-        <input type="radio" name="q1" value="London"> London<br>
-        <input type="radio" name="q1" value="Berlin"> Berlin<br>
-    </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Пройти тест</title>
+</head>
+<body>
+  <header>
+    <h1>Пройти тест</h1>
+    <nav>
+      <a href="index.html">Главная</a> |
+      <a href="test.html">Пройти тест</a> |
+      <a href="test-editor-files/test.html">Создать тест</a> |
+      <a href="login.html">Вход / Регистрация</a>
+    </nav>
+  </header>
+  <main>
+    <h2>Тест по физике</h2>
+    <form id="test-form">
+      <p>1. Вопрос 1: ...</p>
+      <input type="radio" name="q1" value="1"> Ответ 1<br>
+      <input type="radio" name="q1" value="2"> Ответ 2<br>
+      <input type="radio" name="q1" value="3"> Ответ 3<br><br>
 
-    <div>
-        <h2>Question 2: What is 2 + 2?</h2>
-        <input type="radio" name="q2" value="3"> 3<br>
-        <input type="radio" name="q2" value="4"> 4<br>
-        <input type="radio" name="q2" value="5"> 5<br>
-    </div>
+      <p>2. Вопрос 2: ...</p>
+      <input type="radio" name="q2" value="1"> Ответ 1<br>
+      <input type="radio" name="q2" value="2"> Ответ 2<br>
+      <input type="radio" name="q2" value="3"> Ответ 3<br><br>
 
-<button type="button" onclick="calculateScore()">Submit</button>
-</form>
+      <button type="button" onclick="checkAnswers()">Отправить</button>
+    </form>
+    <p id="result"></p>
+  </main>
+  <footer>
+    <p>Мой сайт © 2024</p>
+  </footer>
 
-<div id="result"></div>
+  <script>
+    function checkAnswers() {
+      let result = "Результаты: ";
+      const form = document.getElementById('test-form');
+      // Простая проверка ответов (например, все правильные — первый вариант)
+      if (form.q1.value === "1" && form.q2.value === "1") {
+        result += "Все ответы правильные!";
+      } else {
+        result += "Есть ошибки.";
+      }
+      document.getElementById('result').innerText = result;
+    }
+  </script>
+</body>
+</html>
