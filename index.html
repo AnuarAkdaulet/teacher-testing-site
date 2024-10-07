@@ -1,132 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Test Site</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-        .navbar {
-            background-color: #333;
-            color: #fff;
-            padding: 10px 0;
-            text-align: center;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-
-        .navbar a {
-            margin: 0 15px;
-            color: white;
-            text-decoration: none.
-        }
-        .navbar a:hover {
-            background: #575757;
-            color: white.
-        }
-
-        .content {
-            padding: 60px 20px;
-            margin-top: 50px.
-        }
-    </style>
-    <!-- Подключение нового Google Identity Services -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <title>Главная страница</title>
 </head>
 <body>
-    <!-- Верхнее меню навигации -->
-<nav class="navbar">
-    <a href="index.html?page=home.html">Home</a>
-    <a href="index.html?page=test.html">Test</a>
-    <a href="index.html?page=login.html">Login</a>
-    <a href="index.html?page=privacy.html">Privacy Policy</a>
-    <a href="index.html?page=callback.html">Callback</a>
-   <!-- <a href="index.html?page=test-editor-files/editor.html">Test Editor</a> -->
-    <a href="test-editor-files/editor.html">Test Editor</a>
-    
- <!-- Новая ссылка на редактор тестов -->
-</nav>
-
-    <!-- Основной блок контента -->
-    <div class="content">
-        <div id="main-content"></div>
-    </div>
-
-    <!-- Скрипт для динамической подгрузки страниц -->
-    <script>
-        function loadContent(file) {
-            console.log("Загружаем файл:", file);
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById("main-content").innerHTML = data;
-                    console.log("Содержимое вставлено в #main-content.");
-                    initializePage(file); // Запуск инициализации после подгрузки контента
-                })
-                .catch(error => console.error('Ошибка загрузки:', error));
-        }
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const page = urlParams.get('page') || 'home.html';
-        loadContent(page);
-
-        // Функция инициализации страницы после подгрузки
-        function initializePage(file) {
-            console.log(`initializePage вызвана для: ${file}`);
-            
-            if (file.includes('login.html')) {
-                console.log("login.html загружен. Проверяем Google компонент.");
-                setTimeout(function() {
-                    initializeGoogleAuth(); // Принудительно вызываем инициализацию Google
-                }, 1000); // Задержка для корректной загрузки стилей и элементов
-            }
-        }
-
-        // Принудительная инициализация Google Identity Services после подгрузки
-        function initializeGoogleAuth() {
-            console.log("initializeGoogleAuth: Инициализируем Google компоненты вручную.");
-
-            // Проверяем, есть ли уже загруженный элемент
-            const gsiScript = document.querySelector("script[src='https://accounts.google.com/gsi/client']");
-            if (gsiScript) {
-                console.log("Скрипт Google GSI уже загружен.");
-            } else {
-                console.log("Скрипт Google GSI не загружен. Загружаем вручную.");
-                const script = document.createElement('script');
-                script.src = 'https://accounts.google.com/gsi/client';
-                script.async = true;
-                script.defer = true;
-                script.onload = function() {
-                    console.log("Google API загружен вручную. Инициализация Google Identity.");
-                    renderGoogleButton();
-                };
-                document.head.appendChild(script);
-            }
-
-            // Пробуем создать Google кнопку вручную
-            setTimeout(function() {
-                renderGoogleButton(); // Пробуем повторно отобразить Google кнопку
-            }, 500); // Небольшая задержка для корректной загрузки стилей и элементов
-        }
-
-        // Функция рендеринга кнопки Google вручную
-        function renderGoogleButton() {
-            console.log("Пробуем отрисовать Google кнопку.");
-            const gOnloadElement = document.getElementById('g_id_onload');
-            if (gOnloadElement) {
-                console.log("Элемент g_id_onload найден. Проверяем видимость.");
-                gOnloadElement.style.display = 'block'; // Принудительно делаем видимым
-                console.log("Элемент g_id_onload видим.");
-            } else {
-                console.error("Элемент g_id_onload не найден даже после инициализации!");
-            }
-        }
-    </script>
+  <header>
+    <h1>Добро пожаловать на наш сайт</h1>
+    <nav>
+      <a href="index.html">Главная</a> |
+      <a href="test.html">Пройти тест</a> |
+      <a href="test-editor-files/edit-test.html">Создать тест</a> |
+      <a href="login.html">Вход / Регистрация</a>
+    </nav>
+  </header>
+  <main>
+    <h2>Добро пожаловать!</h2>
+    <p>Вы можете зарегистрироваться, пройти тест или создать новый тест.</p>
+  </main>
+  <footer>
+    <p>Мой сайт © 2024</p>
+  </footer>
 </body>
 </html>
