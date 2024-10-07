@@ -27,14 +27,12 @@
   <script>
     let questions = [];
 
-    // Функция для начала нового теста с нуля
     function startNewTest() {
-      questions = [];  // Очистить список вопросов
-      document.getElementById('questions').innerHTML = '';  // Очистить форму
-      addQuestion();  // Добавить первый вопрос
+      questions = [];
+      document.getElementById('questions').innerHTML = '';
+      addQuestion();
     }
 
-    // Функция для добавления нового вопроса в тест
     function addQuestion() {
       let questionIndex = questions.length + 1;
       document.getElementById('questions').insertAdjacentHTML('beforeend', `
@@ -44,13 +42,15 @@
           <label>Ответ A:</label>
           <input type="text" class="answer" placeholder="Ответ A"><br>
           <label>Ответ B:</label>
-          <input type="text" class="answer" placeholder="Ответ B"><br><br>
+          <input type="text" class="answer" placeholder="Ответ B"><br>
+          <label>Правильный ответ:</label>
+          <input type="radio" name="correct${questionIndex}" value="A"> A
+          <input type="radio" name="correct${questionIndex}" value="B"> B<br><br>
         </div>
       `);
-      questions.push({ questionText: '', answers: ['', ''] });  // Добавить пустой вопрос в массив
+      questions.push({ questionText: '', answers: ['', ''], correct: '' });
     }
 
-    // Функция для загрузки HTML-файла и автоматического заполнения формы
     function loadHTML() {
       let file = document.getElementById('fileInput').files[0];
       if (!file) {
@@ -66,25 +66,21 @@
       reader.readAsText(file);
     }
 
-    // Парсинг HTML-файла и автоматическое заполнение формы
     function parseHTML(htmlContent) {
       let parser = new DOMParser();
       let doc = parser.parseFromString(htmlContent, 'text/html');
-      let questionElements = doc.querySelectorAll('p.question'); // Ищем вопросы в HTML
-      let answerElements = doc.querySelectorAll('p.answer'); // Ищем ответы в HTML
-      questions = [];  // Очистить предыдущие вопросы
+      let questionElements = doc.querySelectorAll('p.question');
+      let answerElements = doc.querySelectorAll('p.answer');
+      questions = [];
+      document.getElementById('questions').innerHTML = '';
 
-      document.getElementById('questions').innerHTML = '';  // Очистить форму на странице
-
-      // Заполнение формы новыми данными
       questionElements.forEach((element, index) => {
         let questionText = element.textContent.trim();
-        let answerA = answerElements[index * 2].textContent.trim();  // Первый ответ
-        let answerB = answerElements[index * 2 + 1].textContent.trim();  // Второй ответ
+        let answerA = answerElements[index * 2].textContent.trim();
+        let answerB = answerElements[index * 2 + 1].textContent.trim();
 
-        questions.push({ questionText: questionText, answers: [answerA, answerB] });
+        questions.push({ questionText: questionText, answers: [answerA, answerB], correct: 'A' });
 
-        // Добавить вопрос и ответы в интерфейс
         document.getElementById('questions').insertAdjacentHTML('beforeend', `
           <div class="question">
             <label>Вопрос ${index + 1}:</label>
@@ -92,13 +88,15 @@
             <label>Ответ A:</label>
             <input type="text" class="answer" value="${answerA}"><br>
             <label>Ответ B:</label>
-            <input type="text" class="answer" value="${answerB}"><br><br>
+            <input type="text" class="answer" value="${answerB}"><br>
+            <label>Правильный ответ:</label>
+            <input type="radio" name="correct${index + 1}" value="A" checked> A
+            <input type="radio" name="correct${index + 1}" value="B"> B<br><br>
           </div>
         `);
       });
     }
 
-    // Сохранение как новый HTML-файл
     function saveAsHTML() {
       let htmlContent = `
       <!DOCTYPE html>
@@ -129,7 +127,6 @@
       saveAs(blob, "edited-test.html");
     }
 
-    // Функция для генерации QTI-файла
     function generateQTI() {
       let zip = new JSZip();
       let qtiContent = `
@@ -143,12 +140,13 @@
       questionDivs.forEach((div, index) => {
         let questionText = div.querySelector('.question-text').value.trim();
         let answers = div.querySelectorAll('.answer');
-        
+        let correctAnswer = div.querySelector(`input[name="correct${index + 1}"]:checked`).value;
+
         if (!questionText || answers[0].value.trim() === "" || answers[1].value.trim() === "") {
           alert(`Вопрос ${index + 1} или его ответы не заполнены. Пожалуйста, заполните все поля.`);
           return;
         }
-        
+
         qtiContent += `
           <item ident="item${index + 1}" title="Вопрос ${index + 1}">
             <presentation>
@@ -170,6 +168,17 @@
                 </render_choice>
               </response_lid>
             </presentation>
+            <resprocessing>
+              <outcomes>
+                <decvar maxvalue="1" minvalue="0" varname="SCORE" vartype="Decimal"/>
+              </outcomes>
+              <respcondition continue="No">
+                <conditionvar>
+                  <varequal respident="response${index + 1}">${correctAnswer}</varequal>
+                </conditionvar>
+                <setvar action="Set" varname="SCORE">1</setvar>
+              </respcondition>
+            </resprocessing>
           </item>`;
       });
 
@@ -184,7 +193,6 @@
       });
     }
 
-    // Передача теста на страницу для студентов
     function transferToStudent() {
       let htmlContent = document.getElementById('questions').innerHTML;
       document.getElementById('hiddenTestData').value = htmlContent;
