@@ -98,7 +98,7 @@
       });
     }
 
-    // Функция для сохранения теста как HTML-файл
+    // Сохранение как новый HTML-файл
     function saveAsHTML() {
       let htmlContent = `
       <!DOCTYPE html>
@@ -139,9 +139,16 @@
             <section ident="root_section">
       `;
 
-      questions.forEach((question, index) => {
-        let questionText = question.questionText;
-        let answers = question.answers;
+      let questionDivs = document.querySelectorAll('.question');
+      questionDivs.forEach((div, index) => {
+        let questionText = div.querySelector('.question-text').value.trim();
+        let answers = div.querySelectorAll('.answer');
+        
+        if (!questionText || answers[0].value.trim() === "" || answers[1].value.trim() === "") {
+          alert(`Вопрос ${index + 1} или его ответы не заполнены. Пожалуйста, заполните все поля.`);
+          return;
+        }
+        
         qtiContent += `
           <item ident="item${index + 1}" title="Вопрос ${index + 1}">
             <presentation>
@@ -150,12 +157,16 @@
               </material>
               <response_lid ident="response${index + 1}">
                 <render_choice>
-                  ${answers.map((answer, i) => `
-                    <response_label ident="${String.fromCharCode(65 + i)}">
-                      <material>
-                        <mattext texttype="text/plain">${answer}</mattext>
-                      </material>
-                    </response_label>`).join('')}
+                  <response_label ident="A">
+                    <material>
+                      <mattext texttype="text/plain">${answers[0].value}</mattext>
+                    </material>
+                  </response_label>
+                  <response_label ident="B">
+                    <material>
+                      <mattext texttype="text/plain">${answers[1].value}</mattext>
+                    </material>
+                  </response_label>
                 </render_choice>
               </response_lid>
             </presentation>
@@ -177,7 +188,6 @@
     function transferToStudent() {
       let htmlContent = document.getElementById('questions').innerHTML;
       document.getElementById('hiddenTestData').value = htmlContent;
-      // Можно отправить это значение на другую страницу или сохранить в LocalStorage
       alert("Данные переданы на страницу студента!");
     }
   </script>
