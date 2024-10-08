@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Тест по физике: Кинематика и Динамика</title>
+  <title>Создание и редактирование HTML-тестов</title>
   <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
   <h2>Создание и редактирование HTML-тестов</h2>
 
   <!-- Кнопки для управления тестом -->
-  <button onclick="startNewTest()">Создать новый тест</button>
+  <button id="createTestBtn" onclick="startNewTest()">Создать новый тест</button>
   <input type="file" id="fileInput" accept=".html">
-  <button onclick="loadHTML()">Загрузить существующий HTML-тест</button>
+  <button id="loadButton">Загрузить существующий HTML-тест</button>
 
   <!-- Поля для ввода и редактирования вопросов и ответов -->
   <div id="questions"></div>
@@ -20,14 +20,17 @@
   <!-- Кнопки для сохранения -->
   <button onclick="saveAsHTML()">Сохранить как HTML</button>
 
-  <!-- Элемент для отображения результата -->
   <div id="result"></div>
 
   <script type="text/javascript">
+    // Сообщение о загрузке страницы
+    console.log("Страница загружена и готова к работе.");
+
     let questions = [];
 
     // Функция для начала нового теста с нуля
     function startNewTest() {
+      console.log("Создание нового теста...");
       questions = [];
       document.getElementById('questions').innerHTML = '';
       addQuestion();
@@ -52,64 +55,88 @@
       questions.push({ questionText: '', answers: ['', ''], correct: '' });
     }
 
+    // Привязка события к кнопке после загрузки DOM
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("DOM полностью загружен.");
+      const loadButton = document.getElementById("loadButton");
+      loadButton.addEventListener("click", function () {
+        console.log("Кнопка 'Загрузить существующий HTML-тест' нажата.");
+        loadHTML(); // Вызов функции загрузки HTML
+      });
+    });
+
     // Функция для загрузки HTML-файла и автоматического заполнения формы
     function loadHTML() {
+      console.log("Функция loadHTML() вызвана.");
       let file = document.getElementById('fileInput').files[0];
       if (!file) {
         alert("Пожалуйста, выберите файл HTML.");
         return;
       }
+      console.log("Файл выбран: " + file.name);
 
       let reader = new FileReader();
       reader.onload = function(event) {
+        console.log("Файл загружен, начинаем парсинг.");
         let htmlContent = event.target.result;
         parseHTML(htmlContent);
       };
       reader.readAsText(file);
     }
 
-    // Обновлённая функция парсинга загружаемого HTML-файла
+    // Функция для парсинга загружаемого HTML-файла
     function parseHTML(htmlContent) {
+      console.log("Начинаем парсинг HTML.");
       let parser = new DOMParser();
       let doc = parser.parseFromString(htmlContent, 'text/html');
-      let questionElements = doc.querySelectorAll('form > div'); // Ищем все div внутри формы
+      let questionElements = doc.querySelectorAll('p, div'); // Поиск вопросов в тэгах <p> или <div>
 
       if (!questionElements.length) {
         alert("Не удалось найти вопросы в загруженном HTML-файле.");
+        console.log("Вопросы не найдены.");
         return;
       }
+      console.log("Вопросы найдены: " + questionElements.length);
 
       questions = [];
       document.getElementById('questions').innerHTML = '';
 
-      // Обработка и добавление загруженных вопросов
       questionElements.forEach((element, index) => {
-        let questionText = element.querySelector('p').textContent;
-        let answers = element.querySelectorAll('input[type="radio"] + text');
-        let answerA = answers[0] ? answers[0].value : '';
-        let answerB = answers[1] ? answers[1].value : '';
-        let correctAnswer = element.querySelector('input[type="hidden"]').value;
+        let questionText = element.textContent.trim();
+        let answers = [];
+        let correctAnswer = '';
 
-        questions.push({ questionText: questionText, answers: [answerA, answerB], correct: correctAnswer });
+        // Проверяем наличие ответов внутри элементов
+        let answerElements = element.querySelectorAll('input[type="radio"] + label');
+        answerElements.forEach((answerEl, ansIndex) => {
+          answers.push(answerEl.textContent.trim());
+        });
 
-        // Заполнение формы с загруженными данными
+        if (answers.length < 2) {
+          // Если нет двух ответов, добавляем пустые строки
+          answers = ['', ''];
+        }
+
+        questions.push({ questionText: questionText, answers: answers, correct: correctAnswer });
+
         document.getElementById('questions').insertAdjacentHTML('beforeend', `
           <div class="question">
             <label>Вопрос ${index + 1}:</label>
             <input type="text" class="question-text" value="${questionText}"><br>
             <label>Ответ A:</label>
-            <input type="text" class="answer" value="${answerA}"><br>
+            <input type="text" class="answer" value="${answers[0] || ''}"><br>
             <label>Ответ B:</label>
-            <input type="text" class="answer" value="${answerB}"><br>
+            <input type="text" class="answer" value="${answers[1] || ''}"><br>
             <label>Правильный ответ:</label>
-            <input type="radio" name="correct${index + 1}" value="A" ${correctAnswer === 'A' ? 'checked' : ''}> A
-            <input type="radio" name="correct${index + 1}" value="B" ${correctAnswer === 'B' ? 'checked' : ''}> B<br><br>
+            <input type="radio" name="correct${index + 1}" value="A"> A
+            <input type="radio" name="correct${index + 1}" value="B"> B<br><br>
           </div>
         `);
       });
     }
 
     function saveAsHTML() {
+      console.log("Сохранение как HTML.");
       let htmlContent = `
       <!DOCTYPE html>
       <html>
