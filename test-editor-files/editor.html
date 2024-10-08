@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Тест по физике: Кинематика и Динамика</title>
-  <script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
@@ -21,9 +20,6 @@
   <!-- Кнопки для сохранения -->
   <button onclick="saveAsHTML()">Сохранить как HTML</button>
 
-  <!-- Скрытое поле для передачи данных на страницу студента -->
-  <textarea id="hiddenTestData" style="display:none"></textarea>
-
   <!-- Элемент для отображения результата -->
   <div id="result"></div>
 
@@ -32,9 +28,9 @@
 
     // Функция для начала нового теста с нуля
     function startNewTest() {
-      questions = [];  // Очистить список вопросов
-      document.getElementById('questions').innerHTML = '';  // Очистить форму
-      addQuestion();  // Добавить первый вопрос
+      questions = [];
+      document.getElementById('questions').innerHTML = '';
+      addQuestion();
     }
 
     // Функция для добавления нового вопроса в тест
@@ -72,27 +68,27 @@
       reader.readAsText(file);
     }
 
-    // Парсинг HTML-файла и автоматическое заполнение формы
+    // Обновлённая функция парсинга загружаемого HTML-файла
     function parseHTML(htmlContent) {
       let parser = new DOMParser();
       let doc = parser.parseFromString(htmlContent, 'text/html');
-      let questionElements = doc.querySelectorAll('.question'); // Ищем все вопросы в HTML
+      let questionElements = doc.querySelectorAll('form > div'); // Ищем все div внутри формы
 
       if (!questionElements.length) {
         alert("Не удалось найти вопросы в загруженном HTML-файле.");
         return;
       }
 
-      // Очистить предыдущие данные
       questions = [];
       document.getElementById('questions').innerHTML = '';
 
       // Обработка и добавление загруженных вопросов
       questionElements.forEach((element, index) => {
-        let questionText = element.querySelector('.question-text').value;
-        let answerA = element.querySelectorAll('.answer')[0].value;
-        let answerB = element.querySelectorAll('.answer')[1].value;
-        let correctAnswer = element.querySelector(`input[name="correct${index + 1}"]:checked`) ? element.querySelector(`input[name="correct${index + 1}"]:checked`).value : '';
+        let questionText = element.querySelector('p').textContent;
+        let answers = element.querySelectorAll('input[type="radio"] + text');
+        let answerA = answers[0] ? answers[0].value : '';
+        let answerB = answers[1] ? answers[1].value : '';
+        let correctAnswer = element.querySelector('input[type="hidden"]').value;
 
         questions.push({ questionText: questionText, answers: [answerA, answerB], correct: correctAnswer });
 
@@ -113,7 +109,6 @@
       });
     }
 
-    // Сохранение как новый HTML-файл
     function saveAsHTML() {
       let htmlContent = `
       <!DOCTYPE html>
