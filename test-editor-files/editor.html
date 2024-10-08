@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-  <title>Создание и редактирование HTML-тестов</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест по физике: Кинематика и Динамика</title>
+  <script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
   <h2>Создание и редактирование HTML-тестов</h2>
 
-  <!-- Кнопки для выбора функционала -->
+  <!-- Кнопки для управления тестом -->
   <button onclick="startNewTest()">Создать новый тест</button>
   <input type="file" id="fileInput" accept=".html">
   <button onclick="loadHTML()">Загрузить существующий HTML-тест</button>
@@ -17,22 +19,25 @@
   <div id="questions"></div>
 
   <!-- Кнопки для сохранения -->
-  <button onclick="generateQTI()">Сохранить в QTI</button>
   <button onclick="saveAsHTML()">Сохранить как HTML</button>
-  <button onclick="transferToStudent()">Перейти к странице теста для студентов</button>
 
   <!-- Скрытое поле для передачи данных на страницу студента -->
   <textarea id="hiddenTestData" style="display:none"></textarea>
 
-  <script>
+  <!-- Элемент для отображения результата -->
+  <div id="result"></div>
+
+  <script type="text/javascript">
     let questions = [];
 
+    // Функция для начала нового теста с нуля
     function startNewTest() {
-      questions = [];
-      document.getElementById('questions').innerHTML = '';
-      addQuestion();
+      questions = [];  // Очистить список вопросов
+      document.getElementById('questions').innerHTML = '';  // Очистить форму
+      addQuestion();  // Добавить первый вопрос
     }
 
+    // Функция для добавления нового вопроса в тест
     function addQuestion() {
       let questionIndex = questions.length + 1;
       document.getElementById('questions').insertAdjacentHTML('beforeend', `
@@ -51,6 +56,7 @@
       questions.push({ questionText: '', answers: ['', ''], correct: '' });
     }
 
+    // Функция для загрузки HTML-файла и автоматического заполнения формы
     function loadHTML() {
       let file = document.getElementById('fileInput').files[0];
       if (!file) {
@@ -66,21 +72,31 @@
       reader.readAsText(file);
     }
 
+    // Парсинг HTML-файла и автоматическое заполнение формы
     function parseHTML(htmlContent) {
       let parser = new DOMParser();
       let doc = parser.parseFromString(htmlContent, 'text/html');
-      let questionElements = doc.querySelectorAll('p.question');
-      let answerElements = doc.querySelectorAll('p.answer');
+      let questionElements = doc.querySelectorAll('.question'); // Ищем все вопросы в HTML
+
+      if (!questionElements.length) {
+        alert("Не удалось найти вопросы в загруженном HTML-файле.");
+        return;
+      }
+
+      // Очистить предыдущие данные
       questions = [];
       document.getElementById('questions').innerHTML = '';
 
+      // Обработка и добавление загруженных вопросов
       questionElements.forEach((element, index) => {
-        let questionText = element.textContent.trim();
-        let answerA = answerElements[index * 2].textContent.trim();
-        let answerB = answerElements[index * 2 + 1].textContent.trim();
+        let questionText = element.querySelector('.question-text').value;
+        let answerA = element.querySelectorAll('.answer')[0].value;
+        let answerB = element.querySelectorAll('.answer')[1].value;
+        let correctAnswer = element.querySelector(`input[name="correct${index + 1}"]:checked`) ? element.querySelector(`input[name="correct${index + 1}"]:checked`).value : '';
 
-        questions.push({ questionText: questionText, answers: [answerA, answerB], correct: 'A' });
+        questions.push({ questionText: questionText, answers: [answerA, answerB], correct: correctAnswer });
 
+        // Заполнение формы с загруженными данными
         document.getElementById('questions').insertAdjacentHTML('beforeend', `
           <div class="question">
             <label>Вопрос ${index + 1}:</label>
@@ -90,13 +106,14 @@
             <label>Ответ B:</label>
             <input type="text" class="answer" value="${answerB}"><br>
             <label>Правильный ответ:</label>
-            <input type="radio" name="correct${index + 1}" value="A" checked> A
-            <input type="radio" name="correct${index + 1}" value="B"> B<br><br>
+            <input type="radio" name="correct${index + 1}" value="A" ${correctAnswer === 'A' ? 'checked' : ''}> A
+            <input type="radio" name="correct${index + 1}" value="B" ${correctAnswer === 'B' ? 'checked' : ''}> B<br><br>
           </div>
         `);
       });
     }
 
+    // Сохранение как новый HTML-файл
     function saveAsHTML() {
       let htmlContent = `
       <!DOCTYPE html>
@@ -112,10 +129,19 @@
       questionDivs.forEach((div, index) => {
         let questionText = div.querySelector('.question-text').value;
         let answers = div.querySelectorAll('.answer');
-        htmlContent += `<p class="question">Вопрос ${index + 1}: ${questionText}</p>`;
-        answers.forEach((answer, i) => {
-          htmlContent += `<p class="answer">Ответ ${String.fromCharCode(65 + i)}: ${answer.value}</p>`;
-        });
+        let correctAnswer = div.querySelector(`input[name="correct${index + 1}"]:checked`).value;
+
+        htmlContent += `<div class="question">
+          <label>Вопрос ${index + 1}:</label>
+          <input type="text" class="question-text" value="${questionText}"><br>
+          <label>Ответ A:</label>
+          <input type="text" class="answer" value="${answers[0].value}"><br>
+          <label>Ответ B:</label>
+          <input type="text" class="answer" value="${answers[1].value}"><br>
+          <label>Правильный ответ:</label>
+          <input type="radio" name="correct${index + 1}" value="A" ${correctAnswer === 'A' ? 'checked' : ''}> A
+          <input type="radio" name="correct${index + 1}" value="B" ${correctAnswer === 'B' ? 'checked' : ''}> B
+        </div><br>`;
       });
 
       htmlContent += `
@@ -125,78 +151,6 @@
 
       let blob = new Blob([htmlContent], {type: "text/html"});
       saveAs(blob, "edited-test.html");
-    }
-
-    function generateQTI() {
-      let zip = new JSZip();
-      let qtiContent = `
-        <?xml version="1.0" encoding="UTF-8"?>
-        <questestinterop xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2">
-          <assessment ident="test_id" title="Редактированный тест">
-            <section ident="root_section">
-      `;
-
-      let questionDivs = document.querySelectorAll('.question');
-      questionDivs.forEach((div, index) => {
-        let questionText = div.querySelector('.question-text').value.trim();
-        let answers = div.querySelectorAll('.answer');
-        let correctAnswer = div.querySelector(`input[name="correct${index + 1}"]:checked`).value;
-
-        if (!questionText || answers[0].value.trim() === "" || answers[1].value.trim() === "") {
-          alert(`Вопрос ${index + 1} или его ответы не заполнены. Пожалуйста, заполните все поля.`);
-          return;
-        }
-
-        qtiContent += `
-          <item ident="item${index + 1}" title="Вопрос ${index + 1}">
-            <presentation>
-              <material>
-                <mattext texttype="text/plain">${questionText}</mattext>
-              </material>
-              <response_lid ident="response${index + 1}">
-                <render_choice>
-                  <response_label ident="A">
-                    <material>
-                      <mattext texttype="text/plain">${answers[0].value}</mattext>
-                    </material>
-                  </response_label>
-                  <response_label ident="B">
-                    <material>
-                      <mattext texttype="text/plain">${answers[1].value}</mattext>
-                    </material>
-                  </response_label>
-                </render_choice>
-              </response_lid>
-            </presentation>
-            <resprocessing>
-              <outcomes>
-                <decvar maxvalue="1" minvalue="0" varname="SCORE" vartype="Decimal"/>
-              </outcomes>
-              <respcondition continue="No">
-                <conditionvar>
-                  <varequal respident="response${index + 1}">${correctAnswer}</varequal>
-                </conditionvar>
-                <setvar action="Set" varname="SCORE">1</setvar>
-              </respcondition>
-            </resprocessing>
-          </item>`;
-      });
-
-      qtiContent += `
-            </section>
-          </assessment>
-        </questestinterop>`;
-
-      zip.file("test.xml", qtiContent);
-      zip.generateAsync({type:"blob"}).then(function(content) {
-        saveAs(content, "test.qti.zip");
-      });
-    }
-
-    function transferToStudent() {
-      let htmlContent = document.getElementById('questions').innerHTML;
-      document.getElementById('hiddenTestData').value = htmlContent;
-      alert("Данные переданы на страницу студента!");
     }
   </script>
 </body>
