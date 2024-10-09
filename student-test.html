@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Прохождение теста</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .menu {
+      display: flex;
+      justify-content: center;
+      background-color: #333;
+    }
+    .menu a {
+      padding: 14px 20px;
+      display: block;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      margin: 4px;
+    }
+    .menu a:hover {
+      background-color: #575757;
+    }
+    .container {
+      margin-top: 20px;
+    }
+    .question {
+      margin: 20px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+    }
+    .question p {
+      margin: 0;
+    }
+    .result {
+      font-size: 18px;
+      color: green;
+    }
+    .correct {
+      background-color: #d4edda; /* Зелёный фон для правильных ответов */
+    }
+    .incorrect {
+      background-color: #f8d7da; /* Красный фон для неправильных ответов */
+    }
+  </style>
+  <!-- Подключение MathJax для рендеринга формул -->
+  <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script type="text/javascript">
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+</head>
+<body>
+  <!-- Добавляем меню на страницу -->
+  <div class="menu">
+    <a href="index.html">Главная</a>
+    <a href="teacher-test.html">Редактирование тестов</a>
+    <a href="student-test.html">Прохождение теста</a>
+	<a href="html-qti.html">QTI-Transformator</a>
+  </div>
+
+  <div class="container">
+    <h2>Прохождение теста по физике</h2>
+    <p>Загрузите HTML-файл теста для прохождения:</p>
+    <input type="file" id="fileInput" accept=".html">
+    <button onclick="loadHTML()">Загрузить тест</button>
+    <div id="testContainer" style="display: none;">
+      <h3>Вопросы теста</h3>
+      <div id="questions"></div>
+      <button onclick="checkAnswers()">Отправить ответы</button>
+    </div>
+    <div id="result"></div>
+  </div>
+
+  <!-- Основной скрипт для загрузки и отображения теста -->
+  <script>
+    let questions = [];
+
+    // Функция загрузки HTML-файла
+    function loadHTML() {
+      let file = document.getElementById('fileInput').files[0];
+      if (!file) {
+        alert("Пожалуйста, выберите файл HTML.");
+        return;
+      }
+
+      let reader = new FileReader();
+      reader.onload = function(event) {
+        let htmlContent = event.target.result;
+        parseHTML(htmlContent);
+      };
+      reader.readAsText(file);
+    }
+
+    // Парсинг и отображение теста
+    function parseHTML(htmlContent) {
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(htmlContent, 'text/html');
+      let questionElements = doc.querySelectorAll('.question');
+
+      if (questionElements.length === 0) {
+        alert("Не удалось найти вопросы в загруженном HTML-файле.");
+        return;
+      }
+
+      questions = [];
+      document.getElementById('questions').innerHTML = '';
+
+      questionElements.forEach((element, index) => {
+        let questionText = element.querySelector('p') ? element.querySelector('p').textContent : '';
+        let answerInputs = element.querySelectorAll('input[type="radio"]');
+        let correctAnswer = element.querySelector(`input[type="hidden"]`) ? element.querySelector(`input[type="hidden"]`).value : '';
+
+        let answers = [];
+        answerInputs.forEach(input => {
+          let answerText = input.nextSibling ? input.nextSibling.textContent.trim() : '';
+          answers.push(answerText);
+        });
+
+        questions.push({ questionText: questionText, answers: answers, correct: correctAnswer });
+
+        console.log(`Вопрос ${index + 1}: правильный ответ — ${correctAnswer}`);
+
+        // Добавление вопроса на страницу
+        let questionHTML = `
+          <div class="question" id="question${index + 1}">
+            <p><b>Вопрос ${index + 1}:</b> ${questionText}</p>
+        `;
+        answers.forEach((answer, i) => {
+          questionHTML += `<input type="radio" name="q${index + 1}" value="${String.fromCharCode(97 + i)}"> ${answer}<br>`;
+        });
+        questionHTML += `</div>`;
+        document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
+      });
+
+      document.getElementById('testContainer').style.display = 'block';
+      document.getElementById('result').innerHTML = '';
+
+      // Рендеринг формул MathJax после загрузки
+      MathJax.typeset();
+    }
+
+    // Функция проверки ответов с цветовой индикацией
+    function checkAnswers() {
+      let score = 0;
+      let totalQuestions = questions.length;
+
+      questions.forEach((question, index) => {
+        let selectedAnswer = document.querySelector(`input[name="q${index + 1}"]:checked`);
+        let questionElement = document.getElementById(`question${index + 1}`);
+
+        console.log(`Проверка вопроса ${index + 1}: выбранный ответ — ${selectedAnswer ? selectedAnswer.value : 'нет ответа'}, правильный ответ — ${questions[index].correct}`);
+
+        if (selectedAnswer && selectedAnswer.value === questions[index].correct) {  // Проверка на правильный ответ из загруженного файла
+          score++;
+          questionElement.classList.add('correct');  // Зелёный цвет для правильных ответов
+        } else {
+          questionElement.classList.add('incorrect');  // Красный цвет для неправильных ответов
+        }
+      });
+
+      document.getElementById("result").innerHTML = `<p class='result'>Вы ответили правильно на ${score} из ${totalQuestions} вопросов.</p>`;
+    }
+  </script>
+</body>
+</html>
