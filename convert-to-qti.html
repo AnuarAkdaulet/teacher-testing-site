@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Конвертация в QTI ZIP</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .menu { display: flex; justify-content: center; background-color: #333; }
+    .menu a { padding: 14px 20px; display: block; color: white; text-align: center; text-decoration: none; margin: 4px; }
+    .menu a:hover { background-color: #575757; }
+  </style>
+</head>
+<body>
+  <div class="menu">
+    <a href="index.html">Главная</a>
+    <a href="student-test.html">Прохождение тестов</a>
+    <a href="teacher-test.html">Редактирование тестов</a>
+  </div>
+  
+  <h2>Конвертация HTML-теста в QTI ZIP</h2>
+  <p>Загрузите HTML-файл для конвертации:</p>
+  <input type="file" id="fileInput" accept=".html">
+  <button onclick="convertToQTI()">Конвертировать в QTI ZIP</button>
+
+  <script>
+    function convertToQTI() {
+      let file = document.getElementById('fileInput').files[0];
+      if (!file) {
+        alert("Пожалуйста, выберите файл HTML.");
+        return;
+      }
+
+      let reader = new FileReader();
+      reader.onload = function(event) {
+        let htmlContent = event.target.result;
+        
+        // Парсинг содержимого HTML для получения вопросов
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(htmlContent, 'text/html');
+        let questionElements = doc.querySelectorAll('.question');
+
+        if (questionElements.length === 0) {
+          alert("Не удалось найти вопросы в загруженном HTML-файле.");
+          return;
+        }
+
+        // Формируем XML для теста
+        let quizXML = '<?xml version="1.0" encoding="UTF-8"?>\n<assessmentItem>\n';
+        questionElements.forEach((element, index) => {
+          let questionText = element.querySelector('p') ? element.querySelector('p').textContent : '';
+          let correctAnswer = element.querySelector('input[type="hidden"]').value;
+          let answers = element.querySelectorAll('input[type="radio"]');
+          quizXML += `<itemBody>\n<p>${questionText}</p>\n`;
+          answers.forEach(answer => {
+            let value = answer.getAttribute('value');
+            quizXML += `<simpleChoice identifier="${value}">${answer.nextSibling.textContent.trim()}</simpleChoice>\n`;
+          });
+          quizXML += `<correctResponse>${correctAnswer}</correctResponse>\n</itemBody>\n`;
+        });
+        quizXML += '</assessmentItem>';
+
+        // Создаём файл manifest.xml
+        let manifestXML = `
+        <?xml version="1.0" encoding="UTF-8"?>
+        <manifest identifier="man0001">
+          <resources>
+            <resource identifier="res1" href="quiz.xml" type="imsqti_xmlv2p1/assessmentitemxml">
+              <file href="quiz.xml"/>
+            </resource>
+          </resources>
+        </manifest>`;
+
+        // Создание ZIP-архива
+        let zip = new JSZip();
+        zip.file("quiz.xml", quizXML);
+        zip.file("manifest.xml", manifestXML);
+
+        // Генерация ZIP и сохранение файла
+        zip.generateAsync({ type: "blob" }).then(function(content) {
+          saveAs(content, "quiz.qti.zip");
+        });
+      };
+      reader.readAsText(file);
+    }
+  </script>
+
+  <!-- Подключение JSZip и FileSaver для создания и сохранения ZIP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</body>
+</html>
