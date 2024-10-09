@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактирование и экспорт в QTI</title>
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .menu {
+      display: flex;
+      justify-content: center;
+      background-color: #333;
+    }
+    .menu a {
+      padding: 14px 20px;
+      display: block;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      margin: 4px;
+    }
+    .menu a:hover {
+      background-color: #575757;
+    }
+    .container {
+      margin-top: 20px;
+    }
+    .question {
+      margin: 20px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+    }
+    .question p {
+      margin: 0;
+    }
+    .result {
+      font-size: 18px;
+      color: green;
+    }
+    .correct {
+      background-color: #d4edda; /* Зелёный фон для правильных ответов */
+    }
+    .incorrect {
+      background-color: #f8d7da; /* Красный фон для неправильных ответов */
+    }
+  </style>
+  <!-- Подключаем библиотеку JSZip для работы с ZIP-архивами -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+</head>
+<body>
+<!-- Добавляем меню на страницу -->
+  <div class="menu">
+    <a href="index.html">Главная</a>
+    <a href="teacher-test.html">Редактирование тестов</a>
+    <a href="student-test.html">Прохождение теста</a>
+	<a href="html-qti.html">QTI-Transformator</a>
+  </div>
+  
+  <div class="container">
+    <h2>Редактирование и экспорт тестов в QTI (Canvas)</h2>
+    <p>Загрузите HTML-файл теста:</p>
+    <input type="file" id="fileInput" accept=".html">
+    <button onclick="loadHTML()">Загрузить тест</button>
+    <div id="testContainer" style="display: none;">
+      <h3>Вопросы теста</h3>
+      <div id="questions"></div>
+      <button onclick="saveAsQTI()">Сохранить как QTI (Canvas)</button>
+      <button onclick="saveAsZIP()">Сохранить как ZIP-архив (Canvas)</button>
+    </div>
+  </div>
+
+  <script>
+    let questions = [];
+
+    // Загрузка HTML-файла
+    function loadHTML() {
+      let file = document.getElementById('fileInput').files[0];
+      if (!file) {
+        alert("Пожалуйста, выберите файл HTML.");
+        return;
+      }
+
+      let reader = new FileReader();
+      reader.onload = function(event) {
+        let htmlContent = event.target.result;
+        parseHTML(htmlContent);
+      };
+      reader.readAsText(file);
+    }
+
+    // Парсинг и отображение теста
+    function parseHTML(htmlContent) {
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(htmlContent, 'text/html');
+      let questionElements = doc.querySelectorAll('.question');
+
+      if (questionElements.length === 0) {
+        alert("Не удалось найти вопросы в загруженном HTML-файле.");
+        return;
+      }
+
+      questions = [];
+      document.getElementById('questions').innerHTML = '';
+
+      questionElements.forEach((element, index) => {
+        let questionText = element.querySelector('p') ? element.querySelector('p').textContent : '';
+        let answerInputs = element.querySelectorAll('input[type="radio"]');
+        let correctAnswer = element.querySelector(`input[type="hidden"]`) ? element.querySelector(`input[type="hidden"]`).value : '';
+
+        let answers = [];
+        answerInputs.forEach(input => {
+          let answerText = input.nextSibling ? input.nextSibling.textContent.trim() : '';
+          answers.push(answerText);
+        });
+
+        questions.push({ questionText: questionText, answers: answers, correct: correctAnswer });
+
+        // Генерация HTML для редактирования
+        let questionHTML = `
+          <div class="question">
+            <p>${questionText}</p>
+        `;
+        answers.forEach((answer, i) => {
+          questionHTML += `<input type="radio" name="q${index + 1}" value="${String.fromCharCode(97 + i)}"> ${answer}<br>`;
+        });
+        questionHTML += `</div>`;
+        document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
+      });
+
+      document.getElementById('testContainer').style.display = 'block';
+    }
+
+    // Сохранение теста в формате QTI
+    function saveAsQTI() {
+      let xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<questestinterop>
+  <assessment ident="test01" title="Экспортированный тест">
+    <section ident="root_section">\n`;
+
+      questions.forEach((q, index) => {
+        xmlContent += `
+      <item ident="question${index + 1}" title="${q.questionText}">
+        <presentation>
+          <material>
+            <mattext texttype="text/html">${q.questionText}</mattext>
+          </material>
+          <response_lid ident="response${index + 1}" rcardinality="Single">
+            <render_choice>\n`;
+
+        q.answers.forEach((answer, i) => {
+          xmlContent += `
+              <response_label ident="${String.fromCharCode(97 + i)}">
+                <material>
+                  <mattext texttype="text/html">${answer}</mattext>
+                </material>
+              </response_label>\n`;
+        });
+
+        xmlContent += `
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response${index + 1}">${q.correct}</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>\n`;
+      });
+
+      xmlContent += `
+    </section>
+  </assessment>
+</questestinterop>`;
+
+      return xmlContent;
+    }
+
+    // Сохранение как ZIP-файл
+    function saveAsZIP() {
+      let zip = new JSZip();
+      let qtiContent = saveAsQTI();
+      
+      // Добавляем QTI-файл в ZIP-архив
+      zip.file("test-export.qti.xml", qtiContent);
+
+      // Генерация ZIP и скачивание
+      zip.generateAsync({ type: "blob" }).then(function(content) {
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(content);
+        link.download = "test-quiz.zip";
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>
