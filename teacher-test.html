@@ -5,73 +5,175 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Редактирование тестов</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    .menu {
-      display: flex;
-      justify-content: center;
-      background-color: #333;
-    }
-    .menu a {
-      padding: 14px 20px;
-      display: block;
-      color: white;
-      text-align: center;
-      text-decoration: none;
-      margin: 4px;
-    }
-    .menu a:hover {
-      background-color: #575757;
-    }
-    .container {
-      margin-top: 20px;
-    }
-    .question {
-      margin: 20px 0;
-      padding: 10px;
-      border: 1px solid #ccc;
-      background: #f9f9f9;
-    }
-    .question p {
-      margin: 0;
-    }
-    .result {
-      font-size: 18px;
-      color: green;
-    }
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .menu { display: flex; justify-content: center; background-color: #333; }
+    .menu a { padding: 14px 20px; display: block; color: white; text-align: center; text-decoration: none; margin: 4px; }
+    .menu a:hover { background-color: #575757; }
+    .container { margin-top: 20px; }
+    .question { margin: 20px 0; padding: 10px; border: 1px solid #ccc; background: #f9f9f9; }
+    .question p { margin: 0; }
+    .result { color: green; font-weight: bold; }
   </style>
 </head>
 <body>
-  <!-- Добавляем меню на страницу -->
- <div class="menu">
+  <div class="menu">
     <a href="index.html">Главная</a>
-    <a href="teacher-test.html">Редактирование тестов</a>
     <a href="student-test.html">Прохождение теста</a>
-	<a href="html-qti.html">QTI-Transformator</a>
   </div>
 
   <div class="container">
-    <h2>Редактирование тестов для преподавателей</h2>
-    <p>Загрузите HTML-файл теста для редактирования:</p>
+    <h2>Редактирование тестов с различными типами вопросов</h2>
+    <button onclick="addMultipleChoice()">Добавить Multiple-choice</button>
+    <button onclick="addNumericQuestion()">Добавить Numerical</button>
+    <button onclick="addDragDrop()">Добавить Drag and Drop</button>
     <input type="file" id="fileInput" accept=".html">
-    <button onclick="loadHTML()">Загрузить тест</button>
-
-    <!-- Редактор вопросов и ответов -->
-    <div id="testEditor" style="display: none;">
-      <h3>Редактирование вопросов</h3>
-      <div id="questions"></div>
-      <button onclick="addQuestion()">Добавить вопрос</button>
-      <button onclick="saveAsHTML()">Сохранить как HTML</button>
-	  <button onclick="saveTest()">Сохранить тест в LocalStorage</button>
-    </div>
+    <button onclick="loadHTML()">Загрузить HTML-тест</button>
+    <button onclick="saveTest()">Сохранить тест в LocalStorage</button>
+    <button onclick="downloadHTML()">Скачать HTML-тест</button>
+    <div id="questions"></div>
+    <div id="status"></div>
   </div>
 
   <script>
     let questions = [];
 
-    // Функция загрузки HTML-файла
+    function addMultipleChoice() {
+      let questionIndex = questions.length + 1;
+      let questionHTML = `
+        <div class="question" data-type="multiple-choice">
+          <p>Вопрос ${questionIndex}: Multiple-choice</p>
+          <textarea class="question-text" rows="2" cols="60" placeholder="Введите текст вопроса"></textarea><br>
+          <label>Ответ A:</label> <input type="text" class="answer" placeholder="Ответ A"><br>
+          <label>Ответ B:</label> <input type="text" class="answer" placeholder="Ответ B"><br>
+          <label>Правильный ответ:</label>
+          <input type="radio" name="correct${questionIndex}" value="A"> A
+          <input type="radio" name="correct${questionIndex}" value="B"> B<br><br>
+        </div>
+      `;
+      document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
+      questions.push({ type: 'multiple-choice', questionText: '', answers: ['', ''], correct: '' });
+    }
+
+    function addNumericQuestion() {
+      let questionIndex = questions.length + 1;
+      let questionHTML = `
+        <div class="question" data-type="numerical">
+          <p>Вопрос ${questionIndex}: Численный ответ</p>
+          <textarea class="question-text" rows="2" cols="60" placeholder="Введите текст вопроса"></textarea><br>
+          <label>Введите численный ответ:</label>
+          <input type="number" class="numeric-answer"><br><br>
+          <input type="hidden" name="correct${questionIndex}" value="">
+        </div>
+      `;
+      document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
+      questions.push({ type: 'numerical', questionText: '', correct: '' });
+    }
+
+    function addDragDrop() {
+      let questionIndex = questions.length + 1;
+      let questionHTML = `
+        <div class="question" data-type="drag-drop">
+          <p>Вопрос ${questionIndex}: Перетащите элементы</p>
+          <textarea class="question-text" rows="2" cols="60" placeholder="Введите текст вопроса"></textarea><br>
+          <label>Ответ A (перетаскиваемый элемент):</label>
+          <input type="text" class="drag-answer" placeholder="Перетащите сюда"><br>
+          <label>Целевое место для перетаскивания:</label>
+          <input type="text" class="drop-target" placeholder="Целевое место"><br><br>
+        </div>
+      `;
+      document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
+      questions.push({ type: 'drag-drop', questionText: '', dragAnswer: '', dropTarget: '' });
+    }
+
+    function saveTest() {
+      let savedQuestions = collectQuestions();
+      if (savedQuestions.length > 0) {
+        try {
+          localStorage.setItem('currentTest', JSON.stringify(savedQuestions));
+          document.getElementById("status").innerHTML = `<p style='color: green;'>Тест успешно сохранён в LocalStorage!</p>`;
+        } catch (e) {
+          document.getElementById("status").innerHTML = `<p style='color: red;'>Ошибка: не удалось сохранить тест в LocalStorage.</p>`;
+        }
+      } else {
+        alert("Ошибка: вопросы не собраны корректно.");
+      }
+    }
+
+function collectQuestions() {
+  let questionDivs = document.querySelectorAll('.question');
+  let savedQuestions = [];
+
+  questionDivs.forEach((div, index) => {
+    let questionType = div.getAttribute('data-type');
+    let questionText = div.querySelector('.question-text') ? div.querySelector('.question-text').value.trim() : '';
+
+    // Проверяем, чтобы текст вопроса не был пустым
+    if (!questionText) {
+      alert(`Ошибка: текст вопроса ${index + 1} пуст.`);
+      return;
+    }
+
+    if (questionType === 'multiple-choice') {
+      let answers = div.querySelectorAll('.answer');
+      if (answers.length < 2) {
+        alert(`Ошибка: недостаточно вариантов ответов для вопроса ${index + 1}.`);
+        return;
+      }
+      let correctAnswerElement = div.querySelector(`input[name="correct${index + 1}"]:checked`);
+      let correctAnswer = correctAnswerElement ? correctAnswerElement.value : '';
+      
+      // Убедимся, что есть правильный ответ
+      if (!correctAnswer) {
+        alert(`Ошибка: правильный ответ не указан для вопроса ${index + 1}.`);
+        return;
+      }
+
+      savedQuestions.push({
+        type: 'multiple-choice',
+        questionText: questionText,
+        answers: [answers[0].value.trim(), answers[1].value.trim()],
+        correct: correctAnswer
+      });
+
+    } else if (questionType === 'numerical') {
+      let correctAnswer = div.querySelector('.numeric-answer') ? div.querySelector('.numeric-answer').value.trim() : '';
+      
+      if (!correctAnswer) {
+        alert(`Ошибка: правильный численный ответ не указан для вопроса ${index + 1}.`);
+        return;
+      }
+
+      savedQuestions.push({
+        type: 'numerical',
+        questionText: questionText,
+        correct: correctAnswer
+      });
+
+    } else if (questionType === 'drag-drop') {
+      let dragAnswer = div.querySelector('.drag-answer') ? div.querySelector('.drag-answer').value.trim() : '';
+      let dropTarget = div.querySelector('.drop-target') ? div.querySelector('.drop-target').value.trim() : '';
+
+      if (!dragAnswer || !dropTarget) {
+        alert(`Ошибка: значения перетаскиваемого элемента или целевого места отсутствуют для вопроса ${index + 1}.`);
+        return;
+      }
+
+      savedQuestions.push({
+        type: 'drag-drop',
+        questionText: questionText,
+        dragAnswer: dragAnswer,
+        dropTarget: dropTarget
+      });
+    } else {
+      alert(`Ошибка: неизвестный тип вопроса ${index + 1}.`);
+      return;
+    }
+  });
+
+  return savedQuestions;
+}
+
+
     function loadHTML() {
       let file = document.getElementById('fileInput').files[0];
       if (!file) {
@@ -87,13 +189,12 @@
       reader.readAsText(file);
     }
 
-    // Парсинг и заполнение редактора
     function parseHTML(htmlContent) {
       let parser = new DOMParser();
       let doc = parser.parseFromString(htmlContent, 'text/html');
       let questionElements = doc.querySelectorAll('.question');
 
-      if (questionElements.length === 0) {
+      if (!questionElements.length) {
         alert("Не удалось найти вопросы в загруженном HTML-файле.");
         return;
       }
@@ -102,83 +203,25 @@
       document.getElementById('questions').innerHTML = '';
 
       questionElements.forEach((element, index) => {
-        let questionText = element.querySelector('p') ? element.querySelector('p').textContent : '';
-        let answerInputs = element.querySelectorAll('input[type="radio"]');
-
-        let answers = [];
-        answerInputs.forEach(input => {
-          let answerText = input.nextSibling ? input.nextSibling.textContent.trim() : '';
-          answers.push(answerText);
-        });
-
-        let correctAnswer = element.querySelector(`input[type="hidden"]`) ? element.querySelector(`input[type="hidden"]`).value : '';
-
-        questions.push({ questionText: questionText, answers: answers, correct: correctAnswer });
-
-        // Добавление вопроса и ответов в редактор
-        let questionHTML = `
-          <div class="question" id="question${index + 1}">
-            <p>Вопрос ${index + 1}:</p>
-            <textarea class="question-text" rows="2" cols="60">${questionText}</textarea><br>
-            <label>Ответ a:</label>
-            <input type="text" class="answer" value="${answers[0] || ''}"><br>
-            <label>Ответ b:</label>
-            <input type="text" class="answer" value="${answers[1] || ''}"><br>
-            <label>Правильный ответ:</label>
-            <input type="radio" name="correct${index + 1}" value="a" ${correctAnswer === 'a' ? 'checked' : ''}> a
-            <input type="radio" name="correct${index + 1}" value="b" ${correctAnswer === 'b' ? 'checked' : ''}> b<br><br>
-          </div>
-        `;
-        document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
+        document.getElementById('questions').appendChild(element.cloneNode(true));
       });
-
-      document.getElementById('testEditor').style.display = 'block';
     }
 
-    // Функция для добавления нового вопроса
-    function addQuestion() {
-      let questionIndex = questions.length + 1;
-      let questionHTML = `
-        <div class="question" id="question${questionIndex}">
-          <p>Вопрос ${questionIndex}:</p>
-          <textarea class="question-text" rows="2" cols="60" placeholder="Введите текст вопроса"></textarea><br>
-          <label>Ответ a:</label>
-          <input type="text" class="answer" placeholder="Ответ a"><br>
-          <label>Ответ b:</label>
-          <input type="text" class="answer" placeholder="Ответ b"><br>
-          <label>Правильный ответ:</label>
-          <input type="radio" name="correct${questionIndex}" value="a"> a
-          <input type="radio" name="correct${questionIndex}" value="b"> b<br><br>
-        </div>
-      `;
-      document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
-      questions.push({ questionText: '', answers: ['', ''], correct: '' });
-    }
-
-    // Функция для сохранения отредактированного теста как HTML
-    function saveAsHTML() {
+    function downloadHTML() {
       let htmlContent = `
       <!DOCTYPE html>
-      <html>
+      <html lang="ru">
       <head>
-        <title>Редактированный тест</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Скачанный тест</title>
       </head>
       <body>
-        <h2>Редактированный тест</h2>
-      `;
+        <h2>Скачанный тест по физике</h2>\n`;
 
       let questionDivs = document.querySelectorAll('.question');
-      questionDivs.forEach((div, index) => {
-        let questionText = div.querySelector('.question-text').value;
-        let answers = div.querySelectorAll('.answer');
-        let correctAnswer = div.querySelector(`input[name="correct${index + 1}"]:checked`) ? div.querySelector(`input[name="correct${index + 1}"]:checked`).value : '';
-
-        htmlContent += `<div class="question">
-          <p>${questionText}</p>
-          <input type="radio" name="q${index + 1}" value="a"> ${answers[0].value}<br>
-          <input type="radio" name="q${index + 1}" value="b"> ${answers[1].value}<br>
-          <input type="hidden" name="correct_q${index + 1}" value="${correctAnswer}">
-        </div><br>`;
+      questionDivs.forEach((div) => {
+        htmlContent += div.outerHTML + "<br>\n";
       });
 
       htmlContent += `
@@ -187,35 +230,11 @@
       `;
 
       let blob = new Blob([htmlContent], { type: "text/html" });
-      let link = document.createElement("a");
+      let link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = "edited-test.html";
+      link.download = 'test.html';
       link.click();
     }
   </script>
-  
-  <script>
-  // Сохранение теста в LocalStorage
-    function saveTest() {
-      let questionDivs = document.querySelectorAll('.question');
-      let savedQuestions = [];
-
-      questionDivs.forEach((div, index) => {
-        let questionText = div.querySelector('.question-text').value;
-        let answers = div.querySelectorAll('.answer');
-        let correctAnswer = div.querySelector(`input[name="correct${index + 1}"]:checked`) ? div.querySelector(`input[name="correct${index + 1}"]:checked`).value : '';
-
-        savedQuestions.push({
-          questionText: questionText,
-          answers: [answers[0].value, answers[1].value],
-          correct: correctAnswer
-        });
-      });
-
-      // Сохранение теста в LocalStorage
-      localStorage.setItem('currentTest', JSON.stringify(savedQuestions));
-      alert("Тест успешно сохранён в LocalStorage!");
-    }
-	</script>
 </body>
 </html>
