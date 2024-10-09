@@ -1,25 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-  <title>Главная страница</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Меню навигации</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .menu {
+      display: flex;
+      justify-content: center;
+      background-color: #333;
+    }
+    .menu a {
+      padding: 14px 20px;
+      display: block;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      margin: 4px;
+    }
+    .menu a:hover {
+      background-color: #575757;
+    }
+    .content {
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Добро пожаловать на наш сайт</h1>
-    <nav>
-      <a href="index.html">Главная</a> |
-      <a href="test.html">Пройти тест</a> |
-      <a href="test-editor-files/editor.html">Создать тест</a> |
-      <a href="test-editor-files/qti.html">EXPort_INPORT</a> |
-      <a href="login.html">Вход / Регистрация</a>
-    </nav>
-  </header>
-  <main>
-    <h2>Добро пожаловать!</h2>
-    <p>Вы можете зарегистрироваться, пройти тест или создать новый тест.</p>
-  </main>
-  <footer>
-    <p>Мой сайт © 2024</p>
-  </footer>
+  <div class="menu">
+    <a href="teacher-test.html" target="_blank">Редактирование тестов</a>
+    <a href="student-test.html" target="_blank">Прохождение теста</a>
+	  <a href="html-qti.html">QTI-Transformator</a>
+  </div>
+
+  <div class="content">
+    <h1>Добро пожаловать на страницу тестов</h1>
+    <p>Выберите нужный раздел в меню, чтобы начать работу:</p>
+    <ul>
+      <li><b>Пример теста:</b> Просмотр шаблона теста для редактирования или создания новых тестов.</li>
+      <li><b>Прохождение теста:</b> Загрузка и прохождение теста для студентов.</li>
+    </ul>
+  </div>
 </body>
 </html>
