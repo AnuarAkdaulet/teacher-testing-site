@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -18,18 +19,17 @@
 <body>
   <div class="menu">
     <a href="index.html">Главная</a>
-    <a href="student-test.html">Прохождение тестов</a>
-    <a href="convert-to-qti.html">Преобразование в QTI</a>
+    <a href="student-test.html">Прохождение теста</a>
   </div>
 
   <div class="container">
     <h2>Редактирование тестов с различными типами вопросов</h2>
     <button onclick="addMultipleChoice()">Добавить Multiple-choice</button>
     <button onclick="addNumericQuestion()">Добавить Numerical</button>
- <!--   <button onclick="addDragDrop()">Добавить Drag and Drop</button> -->
+    <button onclick="addDragDrop()">Добавить Drag and Drop</button>
     <input type="file" id="fileInput" accept=".html">
     <button onclick="loadHTML()">Загрузить HTML-тест</button>
-    <!-- <button onclick="saveTest()">Сохранить тест в LocalStorage</button> -->
+    <button onclick="saveTest()">Сохранить тест в LocalStorage</button>
     <button onclick="downloadHTML()">Скачать HTML-тест</button>
     <div id="questions"></div>
     <div id="status"></div>
@@ -69,7 +69,7 @@
       document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
       questions.push({ type: 'numerical', questionText: '', correct: '' });
     }
-<!--
+
     function addDragDrop() {
       let questionIndex = questions.length + 1;
       let questionHTML = `
@@ -85,7 +85,7 @@
       document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
       questions.push({ type: 'drag-drop', questionText: '', dragAnswer: '', dropTarget: '' });
     }
--->
+
     function saveTest() {
       let savedQuestions = collectQuestions();
       if (savedQuestions.length > 0) {
