@@ -69,7 +69,7 @@
       document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
       questions.push({ type: 'numerical', questionText: '', correct: '' });
     }
-
+<!--
     function addDragDrop() {
       let questionIndex = questions.length + 1;
       let questionHTML = `
@@ -85,7 +85,7 @@
       document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
       questions.push({ type: 'drag-drop', questionText: '', dragAnswer: '', dropTarget: '' });
     }
-
+-->
     function saveTest() {
       let savedQuestions = collectQuestions();
       if (savedQuestions.length > 0) {
