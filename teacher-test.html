@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -64,6 +63,8 @@
       <h3>Редактирование вопросов</h3>
       <div id="questions"></div>
       <button onclick="addQuestion()">Добавить вопрос</button>
+	  <button onclick="addNumericQuestion()">Добавить вопрос с вводом значения</button>
+
       <button onclick="saveAsHTML()">Сохранить как HTML</button>
 	  <button onclick="saveTest()">Сохранить тест в LocalStorage</button>
     </div>
@@ -155,44 +156,73 @@
       document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
       questions.push({ questionText: '', answers: ['', ''], correct: '' });
     }
+	 // Функция для добавления нового вопроса put the answer
+function addNumericQuestion() {
+  let questionIndex = questions.length + 1;
+  let questionHTML = `
+    <div class="question" id="question${questionIndex}">
+      <p>Вопрос ${questionIndex} (ввод значения):</p>
+      <textarea class="question-text" rows="2" cols="60" placeholder="Введите текст вопроса"></textarea><br>
+      <label>Правильное значение:</label>
+      <input type="number" class="numeric-answer" placeholder="Введите правильное значение"><br><br>
+    </div>
+  `;
+  document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
+  questions.push({ questionText: '', correctValue: '' });
+}
 
     // Функция для сохранения отредактированного теста как HTML
-    function saveAsHTML() {
-      let htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Редактированный тест</title>
-      </head>
-      <body>
-        <h2>Редактированный тест</h2>
-      `;
+function saveAsHTML() {
+  let htmlContent = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>Редактированный тест</title>
+  </head>
+  <body>
+    <h2>Редактированный тест</h2>
+  `;
 
-      let questionDivs = document.querySelectorAll('.question');
-      questionDivs.forEach((div, index) => {
-        let questionText = div.querySelector('.question-text').value;
-        let answers = div.querySelectorAll('.answer');
-        let correctAnswer = div.querySelector(`input[name="correct${index + 1}"]:checked`) ? div.querySelector(`input[name="correct${index + 1}"]:checked`).value : '';
+  let questionDivs = document.querySelectorAll('.question');
+  questionDivs.forEach((div, index) => {
+    let questionText = div.querySelector('.question-text').value;
+    let numericInput = div.querySelector('.numeric-answer');
+    let correctAnswer = numericInput ? numericInput.value : '';
 
-        htmlContent += `<div class="question">
-          <p>${questionText}</p>
-          <input type="radio" name="q${index + 1}" value="a"> ${answers[0].value}<br>
-          <input type="radio" name="q${index + 1}" value="b"> ${answers[1].value}<br>
-          <input type="hidden" name="correct_q${index + 1}" value="${correctAnswer}">
-        </div><br>`;
-      });
+    if (numericInput) {
+      // Save as a numeric input question
+      htmlContent += `<div class="question">
+        <p>${questionText}</p>
+        <label>Введите значение:</label>
+        <input type="number" name="q${index + 1}"><br>
+        <input type="hidden" name="correct_q${index + 1}" value="${correctAnswer}">
+      </div><br>`;
+    } else {
+      // Save as a normal multiple-choice question
+      let answers = div.querySelectorAll('.answer');
+      let correctAnswer = div.querySelector(`input[name="correct${index + 1}"]:checked`) ? div.querySelector(`input[name="correct${index + 1}"]:checked`).value : '';
 
-      htmlContent += `
-      </body>
-      </html>
-      `;
-
-      let blob = new Blob([htmlContent], { type: "text/html" });
-      let link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "edited-test.html";
-      link.click();
+      htmlContent += `<div class="question">
+        <p>${questionText}</p>
+        <input type="radio" name="q${index + 1}" value="a"> ${answers[0].value}<br>
+        <input type="radio" name="q${index + 1}" value="b"> ${answers[1].value}<br>
+        <input type="hidden" name="correct_q${index + 1}" value="${correctAnswer}">
+      </div><br>`;
     }
+  });
+
+  htmlContent += `
+  </body>
+  </html>
+  `;
+
+  let blob = new Blob([htmlContent], { type: "text/html" });
+  let link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "edited-test.html";
+  link.click();
+}
+
   </script>
   
   <script>
