@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Редактирование тестов V3.5</title>
+  <title>Редактирование тестов + qti v 3.6 </title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -122,17 +122,24 @@
         questions.push({ questionText: questionText, answers: answers, correct: correctAnswer });
 
         // Добавление вопроса и ответов в редактор
+        let answerOptionsHTML = '';
+        answers.forEach((answer, i) => {
+          let answerIdent = String.fromCharCode(97 + i); // 'a', 'b', 'c', ...
+          answerOptionsHTML += `
+            <label>Ответ ${answerIdent}:</label>
+            <input type="text" class="answer" value="${answer || ''}"><br>`;
+        });
+
         let questionHTML = `
           <div class="question" id="question${index + 1}">
             <p>Вопрос ${index + 1}:</p>
             <textarea class="question-text" rows="2" cols="60">${questionText}</textarea><br>
-            <label>Ответ a:</label>
-            <input type="text" class="answer" value="${answers[0] || ''}"><br>
-            <label>Ответ b:</label>
-            <input type="text" class="answer" value="${answers[1] || ''}"><br>
+            ${answerOptionsHTML}
             <label>Правильный ответ:</label>
-            <input type="radio" name="correct${index + 1}" value="a" ${correctAnswer === 'a' ? 'checked' : ''}> a
-            <input type="radio" name="correct${index + 1}" value="b" ${correctAnswer === 'b' ? 'checked' : ''}> b<br><br>
+            ${answers.map((_, i) => {
+              let answerIdent = String.fromCharCode(97 + i);
+              return `<input type="radio" name="correct${index + 1}" value="${answerIdent}" ${correctAnswer === answerIdent ? 'checked' : ''}> ${answerIdent}`;
+            }).join(' ')}<br><br>
           </div>
         `;
         document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
@@ -152,13 +159,19 @@
           <input type="text" class="answer" placeholder="Ответ a"><br>
           <label>Ответ b:</label>
           <input type="text" class="answer" placeholder="Ответ b"><br>
+          <label>Ответ c:</label>
+          <input type="text" class="answer" placeholder="Ответ c"><br>
+          <label>Ответ d:</label>
+          <input type="text" class="answer" placeholder="Ответ d"><br>
           <label>Правильный ответ:</label>
           <input type="radio" name="correct${questionIndex}" value="a"> a
-          <input type="radio" name="correct${questionIndex}" value="b"> b<br><br>
+          <input type="radio" name="correct${questionIndex}" value="b"> b
+          <input type="radio" name="correct${questionIndex}" value="c"> c
+          <input type="radio" name="correct${questionIndex}" value="d"> d<br><br>
         </div>
       `;
       document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
-      questions.push({ questionText: '', answers: ['', ''], correct: '' });
+      questions.push({ questionText: '', answers: ['', '', '', ''], correct: '' });
     }
 
     // Функция для добавления нового вопроса с вводом значения
@@ -207,75 +220,4 @@
           </outcomes>
           <respcondition continue="No">
             <conditionvar>
-              <varequal respident="response${index + 1}">${correctAnswer}</varequal>
-            </conditionvar>
-            <setvar action="Set" varname="SCORE">100</setvar>
-          </respcondition>
-        </resprocessing>
-      </item>
-`;
-        } else {
-          // Save as a multiple-choice question
-          let answers = div.querySelectorAll('.answer');
-          let correctAnswer = div.querySelector(`input[name="correct${index + 1}"]:checked`) ? div.querySelector(`input[name="correct${index + 1}"]:checked`).value : '';
-
-          qtiContent += `      <item ident="q${index + 1}" title="Вопрос ${index + 1}">
-        <presentation>
-          <material>
-            <mattext texttype="text/html">${questionText}</mattext>
-          </material>
-          <response_lid ident="response${index + 1}" rcardinality="Single">
-            <render_choice>
-`;
-          answers.forEach((answer, i) => {
-            let answerIdent = String.fromCharCode(97 + i); // 'a', 'b', ...
-            qtiContent += `              <response_label ident="${answerIdent}">
-                <material>
-                  <mattext texttype="text/plain">${answer.value}</mattext>
-                </material>
-              </response_label>
-`;
-          });
-
-          qtiContent += `            </render_choice>
-          </response_lid>
-        </presentation>
-        <resprocessing>
-          <outcomes>
-            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal" />
-          </outcomes>
-          <respcondition continue="No">
-            <conditionvar>
-              <varequal respident="response${index + 1}">${correctAnswer}</varequal>
-            </conditionvar>
-            <setvar action="Set" varname="SCORE">100</setvar>
-          </respcondition>
-        </resprocessing>
-      </item>
-`;
-        }
-      });
-
-      qtiContent += `    </section>
-  </assessment>
-</questestinterop>`;
-
-      let zip = new JSZip();
-      zip.file("quiz.xml", qtiContent);
-      let manifestContent = `<?xml version="1.0" encoding="UTF-8"?>
-<manifest identifier="man0001">
-  <resources>
-    <resource identifier="res1" href="quiz.xml" type="imsqti_xmlv2p1/assessmentitemxml">
-      <file href="quiz.xml"/>
-    </resource>
-  </resources>
-</manifest>`;
-      zip.file("manifest.xml", manifestContent);
-
-      zip.generateAsync({ type: "blob" }).then(function(content) {
-        saveAs(content, "edited-test.qti.zip");
-      });
-    }
-  </script>
-</body>
-</html>
+              <varequal respident="response${index + 1}">${correctAnswer
