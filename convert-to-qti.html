@@ -1,3 +1,4 @@
+<!-- Version: 1.7, Last Edited: 2024-10-16 23:10 -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -55,8 +56,7 @@
   <div class="container">
     <h2>Редактирование тестов для преподавателей</h2>
     <p>Загрузите HTML-файл теста для редактирования:</p>
-    <input type="file" id="fileInput" accept=".html">
-    <button onclick="loadHTML()">Загрузить тест</button>
+<input type="file" id="fileInput" accept=".html" onchange="loadHTML()">
 
     <!-- Редактор вопросов и ответов -->
     <div id="testEditor" style="display: none;">
