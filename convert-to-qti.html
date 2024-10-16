@@ -66,10 +66,13 @@
       <button onclick="addNumericQuestion()">Добавить вопрос с вводом значения</button>
 
       <button onclick="saveAsHTML()">Сохранить как HTML</button>
-      <button onclick="saveAsQTI()">Сохранить как QTI</button>
+      <button onclick="saveAsQTI()">Сохранить как QTI ZIP</button>
       <button onclick="saveTest()">Сохранить тест в LocalStorage</button>
     </div>
   </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
   <script>
     let questions = [];
@@ -173,7 +176,7 @@
       questions.push({ questionText: '', correctValue: '' });
     }
 
-    // Функция для сохранения отредактированного теста как QTI
+    // Функция для сохранения отредактированного теста как QTI ZIP
     function saveAsQTI() {
       let qtiContent = `<?xml version="1.0" encoding="UTF-8"?>
 <questestinterop>
@@ -257,11 +260,21 @@
   </assessment>
 </questestinterop>`;
 
-      let blob = new Blob([qtiContent], { type: "text/xml" });
-      let link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "edited-test.qti.xml";
-      link.click();
+      let zip = new JSZip();
+      zip.file("quiz.xml", qtiContent);
+      let manifestContent = `<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="man0001">
+  <resources>
+    <resource identifier="res1" href="quiz.xml" type="imsqti_xmlv2p1/assessmentitemxml">
+      <file href="quiz.xml"/>
+    </resource>
+  </resources>
+</manifest>`;
+      zip.file("manifest.xml", manifestContent);
+
+      zip.generateAsync({ type: "blob" }).then(function(content) {
+        saveAs(content, "edited-test.qti.zip");
+      });
     }
   </script>
 </body>
