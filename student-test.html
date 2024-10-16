@@ -53,8 +53,8 @@
   <script type="text/javascript">
     MathJax = {
       tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        inlineMath: [['$', '$'], ['\(', '\)']],
+        displayMath: [['$$', '$$'], ['\[', '\]']]
       },
       svg: {
         fontCache: 'global'
@@ -127,11 +127,12 @@
             let answerText = input.nextSibling ? input.nextSibling.textContent.trim() : '';
             answers.push({ type: 'multiple-choice', value: input.value, text: answerText });
           } else if (input.type === 'number') {
-            answers.push({ type: 'numerical', value: input.value, text: '' });
+            let correctValue = element.querySelector(`input[name="correct_${input.name}"]`).value;
+            answers.push({ type: 'numerical', input: input, correctValue: correctValue });
           }
         });
 
-        questions.push({ questionText: questionText, answers: answers });
+        questions.push({ questionText: questionText, answers: answers, element: element });
 
         // Добавление вопроса на страницу
         let questionHTML = `<div class="question" id="question${index + 1}"><p><b>Вопрос ${index + 1}:</b> ${questionText}</p>`;
@@ -140,7 +141,7 @@
           if (answer.type === 'multiple-choice') {
             questionHTML += `<input type="radio" name="q${index + 1}" value="${String.fromCharCode(97 + i)}"> ${answer.text}<br>`;
           } else if (answer.type === 'numerical') {
-            questionHTML += `<label>${answer.text}</label><input type="number" name="q${index + 1}_numerical" placeholder="Введите числовое значение"><br>`;
+            questionHTML += `<label>${answer.text || ''}</label><input type="number" name="q${index + 1}_numerical" placeholder="Введите числовое значение"><br>`;
           }
         });
         
@@ -161,10 +162,22 @@
       let totalQuestions = questions.length;
 
       questions.forEach((question, index) => {
-        let selectedAnswer = document.querySelector(`input[name="q${index + 1}"]:checked`) || document.querySelector(`input[name="q${index + 1}_numerical"]`);
+        let selectedAnswer = document.querySelector(`input[name="q${index + 1}"]:checked`);
+        let numericalAnswer = document.querySelector(`input[name="q${index + 1}_numerical"]`);
         let questionElement = document.getElementById(`question${index + 1}`);
 
-        if (selectedAnswer && selectedAnswer.value === 'a') {  // Проверка на правильный ответ
+        let isCorrect = false;
+
+        if (selectedAnswer && question.answers.find(ans => ans.type === 'multiple-choice' && ans.value === selectedAnswer.value)) {
+          isCorrect = true;
+        } else if (numericalAnswer) {
+          let correctValue = parseFloat(question.answers.find(ans => ans.type === 'numerical').correctValue);
+          if (parseFloat(numericalAnswer.value) === correctValue) {
+            isCorrect = true;
+          }
+        }
+
+        if (isCorrect) {
           score++;
           questionElement.classList.add('correct');  // Зелёный цвет для правильных ответов
         } else {
