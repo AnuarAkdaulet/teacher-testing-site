@@ -215,6 +215,68 @@
       document.getElementById('questions').insertAdjacentHTML('beforeend', questionHTML);
       questions.push({ questionText: '', correctValue: '' });
     }
+	// Функция для сохранения отредактированного теста как HTML
+function saveAsHTML() {
+  let htmlContent = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Редактированный тест</title>
+  </head>
+  <body>
+    <h2>Редактированный тест</h2>
+  `;
+
+  let questionDivs = document.querySelectorAll('.question');
+  questionDivs.forEach((div, index) => {
+    let questionText = div.querySelector('.question-text').value;
+    let numericInput = div.querySelector('.numeric-answer');
+    let correctAnswer = numericInput ? numericInput.value : '';
+
+    if (!questionText.trim()) {
+      console.warn(`Вопрос ${index + 1} не заполнен, пропускаем.`);
+      return; // Пропустить незаполненные вопросы
+    }
+
+    if (numericInput) {
+      // Сохранить как вопрос с числовым ответом
+      htmlContent += `<div class="question">
+        <p>${questionText}</p>
+        <label>Введите значение:</label>
+        <input type="number" name="q${index + 1}"><br>
+        <input type="hidden" name="correct_q${index + 1}" value="${correctAnswer}">
+      </div><br>`;
+    } else {
+      // Сохранить как вопрос с несколькими вариантами ответа
+      let answers = div.querySelectorAll('.answer');
+      let correctAnswer = div.querySelector(`input[name="correct${index + 1}"]:checked`) ? div.querySelector(`input[name="correct${index + 1}"]:checked`).value : '';
+
+      let answerOptionsHTML = '';
+      answers.forEach((answer, i) => {
+        let answerIdent = String.fromCharCode(97 + i); // 'a', 'b', 'c', ...
+        answerOptionsHTML += `<input type="radio" name="q${index + 1}" value="${answerIdent}"> ${answer.value}<br>`;
+      });
+
+      htmlContent += `<div class="question">
+        <p>${questionText}</p>
+        ${answerOptionsHTML}
+        <input type="hidden" name="correct_q${index + 1}" value="${correctAnswer}">
+      </div><br>`;
+    }
+  });
+
+  htmlContent += `
+  </body>
+  </html>
+  `;
+
+  let blob = new Blob([htmlContent], { type: "text/html" });
+  let link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "edited-test.html";
+  link.click();
+}
 
     // Функция для сохранения отредактированного теста как QTI ZIP
     function saveAsQTI() {
