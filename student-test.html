@@ -64,11 +64,24 @@
 </head>
 <body>
   <!-- Добавляем меню на страницу -->
-  <div class="menu">
-    <a href="index.html">Главная</a>
-    <a href="convert-to-qti.html">Редактирование & Canvas zip </a>
-    <a href="student-test.html">Прохождение теста</a>
+   <div class="menu" style="position: fixed; top: 0; left: 0; right: 0; background-color: #333; z-index: 1000;">
+ <a href="index.html" class="menu-item" id="mainLink">Главная</a>
+<a href="student-test.html" class="menu-item" id="studentLink">Прохождение теста</a>
+<a href="html-qti.html" class="menu-item" id="qtiLink">QTI-Transformator</a>
+
   </div>
+    <script>
+    // Определяем активный пункт меню
+    document.addEventListener("DOMContentLoaded", function() {
+      const currentLocation = window.location.href;
+      const menuItems = document.querySelectorAll('.menu-item');
+      menuItems.forEach(item => {
+        if (currentLocation.includes(item.getAttribute('href'))) {
+          item.style.backgroundColor = '#575757';
+        }
+      });
+    });
+  </script>
 
   <div class="container">
     <h2>Прохождение теста по физике</h2>
