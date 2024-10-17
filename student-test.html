@@ -86,6 +86,7 @@
   <div class="container">
     <h2>Прохождение теста по физике</h2>
     <p>Загрузите HTML-файл теста для прохождения:</p>
+	<button onclick="loadExampleTest()">Загрузить пример теста</button>
 	<input type="file" id="fileInput" accept=".html" onchange="loadHTML()">
     <div id="testContainer" style="display: none;">
       <h3>Вопросы теста</h3>
@@ -94,7 +95,20 @@
     </div>
     <div id="result"></div>
   </div>
+	
+<script>
+	function loadExampleTest() {
+  fetch('https://anuarakdaulet.github.io/teacher-testing-site/test-example.html')
+    .then(response => response.text())
+    .then(htmlContent => {
+      parseHTML(htmlContent);
+    })
+    .catch(error => {
+      console.error('Ошибка загрузки примера теста:', error);
+    });
+}
 
+  </script>
   <!-- Основной скрипт для загрузки и отображения теста -->
   <script>
     let questions = [];
