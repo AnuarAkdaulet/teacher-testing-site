@@ -47,14 +47,14 @@
 <body>
   <!-- Добавляем меню на страницу -->
  <div class="menu">
-     <a href="index.html">Главная</a>
-    <a href="convert-to-qti.html">Редактирование & Canvas zip </a>
+    <a href="index.html">Главная</a>
+    <a href="teacher-test.html">Редактирование тестов</a>
     <a href="student-test.html">Прохождение теста</a>
+    <a href="html-qti.html">QTI-Transformator</a>
   </div>
 
-  <div class="container">
-    <h2>Редактирование тестов для преподавателей</h2>
-    <p>Загрузите HTML-файл теста для редактирования:</p>
+    <p>Или загрузите тестовый пример из репозитория GitHub:</p>
+    <button onclick="loadExampleTest()">Пример теста</button>
 <input type="file" id="fileInput" accept=".html" onchange="loadHTML()">
 
     <!-- Редактор вопросов и ответов -->
@@ -70,7 +70,19 @@
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <script>
+	function loadExampleTest() {
+  fetch('https://anuarakdaulet.github.io/teacher-testing-site/test-example.html')
+    .then(response => response.text())
+    .then(htmlContent => {
+      parseHTML(htmlContent);
+    })
+    .catch(error => {
+      console.error('Ошибка загрузки примера теста:', error);
+    });
+}
+
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
   <script>
