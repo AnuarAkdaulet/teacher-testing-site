@@ -46,7 +46,7 @@
 </head>
 <body>
   <!-- Добавляем меню на страницу -->
- <div class="menu">
+ <div class="menu" style="position: fixed; top: 0; left: 0; right: 0; background-color: #333; z-index: 1000;">
     <a href="index.html">Главная</a>
     <a href="convert-to-qti.html">Редактирование & Canvas zip </a>
     <a href="student-test.html">Прохождение теста</a>
@@ -59,14 +59,15 @@
     <div id="testEditor" style="display: none;">
       <h3>Редактирование вопросов</h3>
       <div id="questions"></div>
+    </div>
+
+    <div id="footerButtons" style="position: fixed; bottom: 0; left: 0; right: 0; background: #f9f9f9; padding: 10px; text-align: center; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);">
       <button onclick="addQuestion()">Добавить вопрос</button>
       <button onclick="addNumericQuestion()">Добавить вопрос с вводом значения</button>
-
       <button onclick="saveAsHTML()">Сохранить как HTML</button>
       <button onclick="saveAsQTI()">Сохранить как QTI ZIP</button>
       <button onclick="saveTest()">Сохранить тест в LocalStorage</button>
-    </div>
-  </div>
+    </div
 
   <script>
 	function loadExampleTest() {
