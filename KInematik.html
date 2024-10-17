@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Редактированный тест</title>
+</head>
+<body>
+  <h2>Редактированный тест</h2>
+
+  <div class="question">
+    <p>Автомобиль движется с ускорением \( a = 2 \) м/с². Какое расстояние он преодолеет за 10 секунд, начиная из состояния покоя?</p>
+    <label>Введите значение:</label>
+    <input type="number" name="q1"> м<br>
+    <input type="hidden" name="correct_q1" value="100"> (округлено до ближайшего целого)
+  </div><br>
+
+  <div class="question">
+    <p>Тело брошено вертикально вверх с начальной скоростью \( v_0 = 15 \) м/с. Какую максимальную высоту оно достигнет? (Считать ускорение свободного падения \( g = 9.8 \) м/с².)</p>
+    <label>Введите значение:</label>
+    <input type="number" name="q2"> м<br>
+    <input type="hidden" name="correct_q2" value="11.5"> (округлено до одной десятой)
+  </div><br>
+
+  <div class="question">
+    <p>На тело массой \( m = 5 \) кг действует горизонтальная сила \( F = 20 \) Н. Если коэффициент трения между телом и поверхностью равен \( μ = 0.1 \), какое ускорение приобретет тело?</p>
+    <label>Введите значение:</label>
+    <input type="number" name="q3"> м/с²<br>
+    <input type="hidden" name="correct_q3" value="3.8"> (округлено до одной десятой)
+  </div><br>
+
+  <div class="question">
+    <p>Тело массой \( m = 2 \) кг движется по окружности радиуса \( r = 3 \) м с постоянной скоростью \( v = 4 \) м/с. Чему равно центростремительное ускорение и какая сила необходима для поддержания этого движения?</p>
+    <label>Центростремительное ускорение:</label>
+    <input type="number" name="q4a"> м/с²<br>
+    <input type="hidden" name="correct_q4a" value="5.3"> (округлено до одной десятой)
+    <label>Необходимая сила:</label>
+    <input type="number" name="q4b"> Н<br>
+    <input type="hidden" name="correct_q4b" value="10.7"> (округлено до одной десятой)
+  </div><br>
+
+  <div class="question">
+    <p>Груз массой \( m = 0.5 \) кг прикреплен к пружине с жесткостью \( k = 200 \) Н/м. Если груз вывести из положения равновесия на 0.1 м и отпустить, какова будет частота колебаний?</p>
+    <label>Введите значение:</label>
+    <input type="number" name="q5"> Гц<br>
+    <input type="hidden" name="correct_q5" value="3.2"> (округлено до одной десятой)
+  </div><br>
+
+  <div class="question">
+    <p>Два тела массами \( m_1 = 3 \) кг и \( m_2 = 4 \) кг движутся навстречу друг другу со скоростями \( v_1 = 5 \) м/с и \( v_2 = 2 \) м/с соответственно. После абсолютно неупругого столкновения, с какой скоростью и в каком направлении будут двигаться тела?</p>
+    <label>Скорость после столкновения:</label>
+    <input type="number" name="q6"> м/с<br>
+    <input type="hidden" name="correct_q6" value="1.1"> (округлено до одной десятой)
+    <label>Направление движения:</label>
+    <input type="text" name="q6_dir"><br>
+    <input type="hidden" name="correct_q6_dir" value="в сторону движения m_1">
+  </div><br>
+
+  <div class="question">
+    <p>Камень брошен под углом \( \theta = 30^\circ \) к горизонту с начальной скоростью \( v_0 = 20 \) м/с. Какова будет максимальная высота подъема и дальность полета? (Пренебречь сопротивлением воздуха, \( g = 9.8 \) м/с².)</p>
+    <label>Максимальная высота:</label>
+    <input type="number" name="q7a"> м<br>
+    <input type="hidden" name="correct_q7a" value="5.1"> (округлено до одной десятой)
+    <label>Дальность полета:</label>
+    <input type="number" name="q7b"> м<br>
+    <input type="hidden" name="correct_q7b" value="35.3"> (округлено до одной десятой)
+  </div><br>
+
+  <div class="question">
+    <p>С какой скоростью должен двигаться спутник по круговой орбите на высоте \( h = 300 \) км над поверхностью Земли? Радиус Земли \( R = 6.37 \times 10^6 \) м, гравитационная постоянная \( G = 6.674 \times 10^{-11} \) Н·м²/кг², масса Земли \( M = 5.97 \times 10^{24} \) кг.</p>
+    <label>Скорость спутника:</label>
+    <input type="number" name="q8"> м/с<br>
+    <input type="hidden" name="correct_q8" value="7700"> (округлено до ближайшего целого)
+  </div><br>
+
+  <div class="question">
+    <p>Какую работу необходимо совершить, чтобы поднять тело массой \( m = 10 \) кг на высоту \( h = 5 \) м?</p>
+    <label>Работа:</label>
+    <input type="number" name="q9"> Дж<br>
+    <input type="hidden" name="correct_q9" value="490"> (округлено до ближайшего целого)
+  </div><br>
+
+  <div class="question">
+    <p>Электрический поезд увеличивает свою скорость от 0 до 25 м/с за 20 секунд. Какова средняя мощность, развиваемая поездом, если его масса \( m = 2 \times 10^5 \) кг? (Пренебречь сопротивлением движения.)</p>
+    <label>Мощность:</label>
+    <input type="number" name="q10"> Вт<br>
+    <input type="hidden" name="correct_q10" value="625000"> (округлено до ближайшего целого)
+  </div><br>
+
+  <div class="question">
+    <p>Что в механике понимается под материальной точкой?</p>
+    <input type="radio" name="q11" value="a"> Тело, размерами которого можно пренебречь в данных условиях<br>
+    <input type="radio" name="q11" value="b"> Точка пересечения осей координат<br>
+    <input type="radio" name="q11" value="c"> Частица с нулевой массой<br>
+    <input type="radio" name="q11" value="d"> Тело, движущееся по прямой линии<br>
+    <input type="hidden" name="correct_q11" value="a">
+  </div><br>
+
+  <div class="question">
+    <p>Как определяется ускорение тела?</p>
+    <input type="radio" name="q12" value="a"> Как скорость тела в любой момент времени<br>
+    <input type="radio" name="q12" value="b"> Как изменение скорости тела за единицу времени<br>
+    <input type="radio" name="q12" value="c"> Как сила, действующая на тело<br>
+    <input type="radio" name="q12" value="d"> Как масса тела, умноженная на его скорость<br>
+    <input type="hidden" name="correct_q12" value="b">
+  </div><br>
+
+  <div class="question">
+    <p>Что такое траектория движения тела?</p>
+    <input type="radio" name="q13" value="a"> Путь, пройденный телом за определенное время<br>
+    <input type="radio" name="q13" value="b"> Линия, по которой движется тело<br>
+    <input type="radio" name="q13" value="c"> Скорость тела в любой момент времени<br>
+    <input type="radio" name="q13" value="d"> Сумма всех сил, действующих на тело<br>
+    <input type="hidden" name="correct_q13" value="b">
+  </div><br>
+
+  <div class="question">
+    <p>Что такое путь в механике?</p>
+    <input type="radio" name="q14" value="a"> Расстояние между начальной и конечной точкой движения<br>
+    <input type="radio" name="q14" value="b"> Длина траектории, пройденной телом<br>
+    <input type="radio" name="q14" value="c"> Прямой отрезок от начальной до конечной позиции<br>
+    <input type="radio" name="q14" value="d"> Вектор, соединяющий начальную и конечную точку<br>
+    <input type="hidden" name="correct_q14" value="b">
+  </div><br>
+
+  <div class="question">
+    <p>Что такое нормальное ускорение?</p>
+    <input type="radio" name="q15" value="a"> Ускорение, направленное вдоль траектории движения тела<br>
+    <input type="radio" name="q15" value="b"> Ускорение, связанное с изменением скорости по модулю<br>
+    <input type="radio" name="q15" value="c"> Ускорение, направленное по нормали к траектории и связанное с изменением направления скорости<br>
+    <input type="radio" name="q15" value="d"> Ускорение свободного падения<br>
+    <input type="hidden" name="correct_q15" value="c">
+  </div><br>
+
+  <div class="question">
+    <p>Сформулируйте первый закон Ньютона.</p>
+    <input type="radio" name="q16" value="a"> Сила равна произведению массы на ускорение<br>
+    <input type="radio" name="q16" value="b"> Всякое тело сохраняет состояние покоя или равномерного прямолинейного движения, если на него не действуют внешние силы<br>
+    <input type="radio" name="q16" value="c"> Сила действия равна силе противодействия<br>
+    <input type="radio" name="q16" value="d"> Работа равна произведению силы на путь<br>
+    <input type="hidden" name="correct_q16" value="b">
+  </div><br>
+
+  <div class="question">
+    <p>Сформулируйте второй закон Ньютона.</p>
+    <input type="radio" name="q17" value="a"> Сила действия равна силе противодействия<br>
+    <input type="radio" name="q17" value="b"> Сила равна произведению массы на ускорение<br>
+    <input type="radio" name="q17" value="c"> Всякое тело сохраняет состояние покоя или равномерного прямолинейного движения, если на него не действуют внешние силы<br>
+    <input type="radio" name="q17" value="d"> Сила трения пропорциональна нормальной реакции опоры<br>
+    <input type="hidden" name="correct_q17" value="b">
+  </div><br>
+
+  <div class="question">
+    <p>Сформулируйте третий закон Ньютона.</p>
+    <input type="radio" name="q18" value="a"> Сила действия равна произведению массы на ускорение<br>
+    <input type="radio" name="q18" value="b"> Сила действия равна силе противодействия, направлена в противоположную сторону<br>
+    <input type="radio" name="q18" value="c"> Всякое тело сохраняет состояние покоя или равномерного прямолинейного движения, если на него не действуют внешние силы<br>
+    <input type="radio" name="q18" value="d"> Сила тяготения пропорциональна произведению масс и обратно пропорциональна квадрату расстояния между ними<br>
+    <input type="hidden" name="correct_q18" value="b">
+  </div><br>
+
+  <div class="question">
+    <p>Вопрос Что такое момент импульса тела?</p>
+    <input type="radio" name="q19" value="a"> Произведение массы тела на его скорость<br>
+    <input type="radio" name="q19" value="b"> Произведение силы на плечо<br>
+    <input type="radio" name="q19" value="c"> Векторное произведение радиус-вектора на импульс тела<br>
+    <input type="radio" name="q19" value="d"> Произведение массы на ускорение<br>
+    <input type="hidden" name="correct_q19" value="c">
+  </div><br>
+
+  <div class="question">
+    <p>Каково определение импульса тела?</p>
+    <input type="radio" name="q20" value="a"> Произведение массы тела на его скорость<br>
+    <input type="radio" name="q20" value="b"> Произведение силы на время ее действия<br>
+    <input type="radio" name="q20" value="c"> Произведение массы на ускорение<br>
+    <input type="radio" name="q20" value="d"> Работа, совершаемая силой за определенное время<br>
+    <input type="hidden" name="correct_q20" value="a">
+  </div><br>
+
+</body>
+</html>
