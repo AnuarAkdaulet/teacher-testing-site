@@ -48,26 +48,28 @@
       background-color: #f8d7da; /* Красный фон для неправильных ответов */
     }
   </style>
+
   <!-- Подключение MathJax для рендеринга формул -->
-  <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script type="text/javascript">
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\(', '\)']],
-        displayMath: [['$$', '$$'], ['\[', '\]']]
-      },
-      svg: {
-        fontCache: 'global'
-      }
-    };
-  </script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script type="text/javascript">
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+
 </head>
 <body>
   <!-- Добавляем меню на страницу -->
-<div class="menu" style="position: fixed; top: 0; left: 0; right: 0; background-color: #333; z-index: 1000;">
+   <div class="menu" style="position: fixed; top: 0; left: 0; right: 0; background-color: #333; z-index: 1000;">
  <a href="index.html" class="menu-item" id="mainLink">Главная</a>
 <a href="student-test.html" class="menu-item" id="studentLink">Прохождение теста</a>
-<a href="convert-to-qti.html" class="menu-item" id="qtiLink">QTI-Transformator</a>
+<a href="html-qti.html" class="menu-item" id="qtiLink">QTI-Transformator</a>
 
   </div>
     <script>
@@ -85,8 +87,10 @@
 
   <div class="container">
     <h2>Прохождение теста по физике</h2>
-	<button onclick="loadExampleTest()">Пример теста</button>
+    <p>Загрузите HTML-файл теста для прохождения:</p>
+	 <button onclick="loadExampleTest()">Загрузить пример теста</button>
 	<input type="file" id="fileInput" accept=".html" onchange="loadHTML()">
+	
     <div id="testContainer" style="display: none;">
       <h3>Вопросы теста</h3>
       <div id="questions"></div>
@@ -94,7 +98,7 @@
     </div>
     <div id="result"></div>
   </div>
-	
+
 <script>
 	function loadExampleTest() {
   fetch('https://anuarakdaulet.github.io/teacher-testing-site/test-example.html')
